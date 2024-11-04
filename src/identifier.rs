@@ -6,7 +6,7 @@ pub type ArxivIdResult<'a> = Result<ArxivId<'a>, ArxivIdError>;
 
 /// An error that can occur when parsing and validating arXiv identifiers
 #[non_exhaustive]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ArxivIdError {
 	/// Expected the identifier to start with the string literal "arXiv"
 	ExpectedBeginningLiteral,
@@ -17,7 +17,7 @@ pub enum ArxivIdError {
 	/// An invalid year outside of the inclusive [2007, 2099] interval
 	InvalidYear,
 	/// An invalid year outside of the inclusive [1, 99999] interval
-	InvalidId(String),
+	InvalidId,
 }
 
 impl Error for ArxivIdError {}
@@ -25,11 +25,15 @@ impl Error for ArxivIdError {}
 impl Display for ArxivIdError {
 	fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
 		match self {
-			Self::ExpectedBeginningLiteral => f.write_str("Expected the identifier to start with the literal \"arXiv\"."),
-			Self::ExpectedNumberVv => f.write_str("Expected the identifier to have a component of format .number{{vV}}."),
+			Self::ExpectedBeginningLiteral => {
+				f.write_str("Expected the identifier to start with the literal \"arXiv\".")
+			}
+			Self::ExpectedNumberVv => {
+				f.write_str("Expected the identifier to have a component of format .number{{vV}}.")
+			}
 			Self::InvalidMonth => f.write_str("A valid month must be between 1 and 12."),
 			Self::InvalidYear => f.write_str("A valid year must be be between 2007 and 2099."),
-			Self::InvalidId(s) => write!(f, "A valid identifier must be between 1 and 99999. {}", s),
+			Self::InvalidId => f.write_str("A valid identifier must be between 1 and 99999"),
 		}
 	}
 }
@@ -155,7 +159,7 @@ impl<'a> ArxivId<'a> {
 		let length_check = (Self::MIN_NUM_DIGITS..=Self::MAX_NUM_DIGITS).contains(&number.len());
 		let digit_check = number.chars().all(|c| c.is_ascii_digit());
 		if !length_check || !digit_check {
-			return Err(ArxivIdError::InvalidId(number.to_owned()));
+			return Err(ArxivIdError::InvalidId);
 		}
 
 		Ok(Self::new(year, month, number, version))
@@ -465,6 +469,6 @@ mod tests {
 
 	#[test]
 	fn parse_arxiv_invalid_id() {
-		assert_eq!(ArxivId::try_latest(2007, 11, ""), Err(ArxivIdError::InvalidId("".to_owned())))
+		assert_eq!(ArxivId::try_latest(2007, 11, ""), Err(ArxivIdError::InvalidId))
 	}
 }

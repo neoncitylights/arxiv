@@ -17,7 +17,7 @@ pub type ArxivStampResult<'a> = Result<ArxivStamp<'a>, ArxivStampError>;
 ///
 /// let stamp = ArxivStamp::try_from("arXiv:2001.00001 [cs.LG] 1 Jan 2000");
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ArxivStampError {
 	InvalidArxivId(ArxivIdError),
 	InvalidDate(TimeParseError),
