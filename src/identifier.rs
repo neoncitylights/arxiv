@@ -12,8 +12,6 @@ pub enum ArxivIdError {
 	ExpectedBeginningLiteral,
 	/// Expected to find a `numbervV` component
 	ExpectedNumberVv,
-	/// A generic parsing syntax error
-	Syntax,
 	/// An invalid month outside of the inclusive [1, 12] interval
 	InvalidMonth,
 	/// An invalid year outside of the inclusive [2007, 2099] interval
@@ -29,7 +27,6 @@ impl Display for ArxivIdError {
 		match self {
 			Self::ExpectedBeginningLiteral => f.write_str("Expected the identifier to start with the literal \"arXiv\"."),
 			Self::ExpectedNumberVv => f.write_str("Expected the identifier to have a component of format .number{{vV}}."),
-			Self::Syntax => f.write_str("There was a syntax error; an ArXiv identifier must conform to the schema of arXiv:YYMM.number{{vV}}."),
 			Self::InvalidMonth => f.write_str("A valid month must be between 1 and 12."),
 			Self::InvalidYear => f.write_str("A valid year must be be between 2007 and 2099."),
 			Self::InvalidId(s) => write!(f, "A valid identifier must be between 1 and 99999. {}", s),
