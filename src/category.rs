@@ -26,15 +26,14 @@ impl ArxivCategoryId {
 	/// Valid archive identifiers are listed under the official website's page for [category taxonomy][arxiv-cat].
 	///
 	/// [arxiv-cat]: <https://arxiv.org/category_taxonomy>
-	#[rustfmt::skip]
 	pub fn try_new(archive: ArxivArchive, subject: &str) -> Option<Self> {
 		let is_valid = match archive {
 			ArxivArchive::AstroPh => matches!(subject, "CO" | "EP" | "GA" | "HE" | "IM" | "SR"),
-			ArxivArchive::CondMat => matches!(subject,
-					| "dis-nn" | "mes-hall" | "mtrl-sci"
-					| "other" | "quant-gas" | "soft"
-					| "stat-mech" | "str-el" | "supr-con"
-			),
+			ArxivArchive::CondMat => matches!(subject, |"dis-nn"| "mes-hall"
+				| "mtrl-sci" | "other"
+				| "quant-gas"
+				| "soft" | "stat-mech"
+				| "str-el" | "supr-con"),
 			ArxivArchive::Cs => COMPSCI_TABLE.binary_search(&subject).is_ok(),
 			ArxivArchive::Econ => matches!(subject, "EM" | "GN" | "TH"),
 			ArxivArchive::Eess => matches!(subject, "AS" | "IV" | "SP" | "SY"),
@@ -49,7 +48,10 @@ impl ArxivCategoryId {
 			ArxivArchive::NuclEx => subject.is_empty(),
 			ArxivArchive::NuclTh => subject.is_empty(),
 			ArxivArchive::Physics => PHYSICS_TABLE.binary_search(&subject).is_ok(),
-			ArxivArchive::QBio    => matches!(subject, "BM" | "CB" | "GN" | "MN" | "NC" | "OT" | "PE" | "QM" | "SC" | "TO"),
+			ArxivArchive::QBio => matches!(
+				subject,
+				"BM" | "CB" | "GN" | "MN" | "NC" | "OT" | "PE" | "QM" | "SC" | "TO"
+			),
 			ArxivArchive::QFin => {
 				matches!(subject, "CP" | "EC" | "GN" | "MF" | "PM" | "PR" | "RM" | "ST" | "SR")
 			}
@@ -206,32 +208,28 @@ pub enum ArxivArchive {
 
 impl Display for ArxivArchive {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-		write!(
-			f,
-			"{}",
-			match self {
-				ArxivArchive::AstroPh => "astro-ph",
-				ArxivArchive::CondMat => "cond-mat",
-				ArxivArchive::Cs => "cs",
-				ArxivArchive::Econ => "econ",
-				ArxivArchive::Eess => "eess",
-				ArxivArchive::GrQc => "gr-qc",
-				ArxivArchive::HepEx => "hep-ex",
-				ArxivArchive::HepLat => "hep-lat",
-				ArxivArchive::HepPh => "hep-ph",
-				ArxivArchive::HepTh => "hep-th",
-				ArxivArchive::MathPh => "math-ph",
-				ArxivArchive::Math => "math",
-				ArxivArchive::Nlin => "nlin",
-				ArxivArchive::NuclEx => "nucl-ex",
-				ArxivArchive::NuclTh => "nucl-th",
-				ArxivArchive::Physics => "physics",
-				ArxivArchive::QBio => "q-bio",
-				ArxivArchive::QFin => "q-fin",
-				ArxivArchive::QuantPh => "quant-ph",
-				ArxivArchive::Stat => "stat",
-			}
-		)
+		match self {
+			ArxivArchive::AstroPh => f.write_str("astro-ph"),
+			ArxivArchive::CondMat => f.write_str("cond-mat"),
+			ArxivArchive::Cs => f.write_str("cs"),
+			ArxivArchive::Econ => f.write_str("econ"),
+			ArxivArchive::Eess => f.write_str("eess"),
+			ArxivArchive::GrQc => f.write_str("gr-qc"),
+			ArxivArchive::HepEx => f.write_str("hep-ex"),
+			ArxivArchive::HepLat => f.write_str("hep-lat"),
+			ArxivArchive::HepPh => f.write_str("hep-ph"),
+			ArxivArchive::HepTh => f.write_str("hep-th"),
+			ArxivArchive::MathPh => f.write_str("math-ph"),
+			ArxivArchive::Math => f.write_str("math"),
+			ArxivArchive::Nlin => f.write_str("nlin"),
+			ArxivArchive::NuclEx => f.write_str("nucl-ex"),
+			ArxivArchive::NuclTh => f.write_str("nucl-th"),
+			ArxivArchive::Physics => f.write_str("physics"),
+			ArxivArchive::QBio => f.write_str("q-bio"),
+			ArxivArchive::QFin => f.write_str("q-fin"),
+			ArxivArchive::QuantPh => f.write_str("quant-ph"),
+			ArxivArchive::Stat => f.write_str("stat"),
+		}
 	}
 }
 
