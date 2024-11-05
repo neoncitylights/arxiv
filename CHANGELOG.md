@@ -14,6 +14,7 @@
 - implement `TryFrom<&'a str>` for: `ArxivId`, `ArxivCategoryId`, `ArxivStamp`
 - `ArxivId`: make `number` and `version` fields public
 - `ArxivId`: add `new()` and `new_latest()` methods (replacing `new_unchecked()` and `new_unchecked_latest()` respectively)
+- `ArxivId`: add `as_unique_ident()` method, which returns a unique identifier for the arXiv article in the form of "YYMM.NNNNN"
 - `ArxivStamp`: make all fields public
 - Introduce a crate feature `url`. This optionally installs the "url" dependency, and allows creating a `url::Url` instance from an `ArxivId` or `ArxivCategoryId` via:
   - `impl<'a> From<ArxivId<'a>> for url::Url`
