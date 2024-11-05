@@ -270,8 +270,8 @@ impl FromStr for Archive {
 }
 
 #[cfg(feature = "url")]
-impl From<ArxivArchive> for url::Url {
-	fn from(archive: ArxivArchive) -> url::Url {
+impl From<Archive> for url::Url {
+	fn from(archive: Archive) -> url::Url {
 		url::Url::parse(&format!("https://arxiv.org/archive/{}", archive)).unwrap()
 	}
 }
