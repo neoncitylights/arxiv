@@ -10,20 +10,13 @@ updates:
     schedule:
       interval: "monthly"
     commit-message:
-      prefix: "chore(deps/cargo):"
-    labels:
-      - "t-dependencies"
-      - "pkg-cargo"
+      prefix: "deps(cargo):"
     open-pull-requests-limit: 4
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
     commit-message:
-      prefix: "chore(deps/actions):"
-      include: "scope"
-    labels:
-      - "t-dependencies"
-      - "pkg-gh-actions"
+      prefix: "deps(gha):"
     open-pull-requests-limit: 4
