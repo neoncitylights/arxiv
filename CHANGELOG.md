@@ -2,11 +2,11 @@
 
 ## Unreleased
 
-### Fixed
+### Bug fixes
 - Fix `ArxivId::try_new()` to check if the given number string is all ASCII digits
 - Fix `ArxivId::try_new()` to return `ArxivIdError::InvalidYear`/`ArxivIdError::InvalidMonth` for invalid year/months instead of `ArxivIdError::Syntax` for either
 
-### Added
+### Features
 - Introduce `ArticleVersion` enum
 - Introduce `ArxivIdError::ExpectedBeginningLiteral`, `ArxivIdError::ExpectedNumberVv` variants
 - implement `Copy` for: `ArxivId`, `ArxivCategoryId`, `ArxivStamp`
@@ -14,8 +14,6 @@
 - `ArxivId`: make `number` and `version` fields public
 - `ArxivId`: add `new()` and `new_latest()` methods (replacing `new_unchecked()` and `new_unchecked_latest()` respectively)
 - `ArxivStamp`: make all fields public
-
-### Removed
 
 ### Breaking changes
 - `ArxivIdError`: now marked with `#[non_exhaustive]`
