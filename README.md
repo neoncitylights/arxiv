@@ -1,5 +1,13 @@
 # arXiv
 
+[![License][license-badge]][license-url]
+[![CI][ci-badge]][ci-url]
+
+[license-badge]: https://img.shields.io/badge/License-MIT%20%26%20Apache%202.0-blue?style=flat-square
+[license-url]: #license
+[ci-badge]: https://img.shields.io/github/actions/workflow/status/neoncitylights/arxiv/.github/workflows/main.yml?style=flat-square
+[ci-url]: https://github.com/neoncitylights/arxiv/actions/workflows/main.yml
+
 A Rust library for parsing `arXiv` categories, identifiers and references.
 
 ## Install
