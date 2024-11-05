@@ -53,17 +53,17 @@ impl Display for ArxivIdError {
 /// [arxiv-docs]: https://info.arxiv.org/help/arxiv_identifier.html
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ArxivId<'a> {
-	year: u16,
-	month: u8,
+	year: i16,
+	month: i8,
 	number: &'a str,
 	version: ArticleVersion,
 }
 
 impl<'a> ArxivId<'a> {
-	pub const MIN_YEAR: u16 = 2007u16;
-	pub const MAX_YEAR: u16 = 2099u16;
-	pub const MIN_MONTH: u8 = 1u8;
-	pub const MAX_MONTH: u8 = 12u8;
+	pub const MIN_YEAR: i16 = 2007i16;
+	pub const MAX_YEAR: i16 = 2099i16;
+	pub const MIN_MONTH: i8 = 1i8;
+	pub const MAX_MONTH: i8 = 12i8;
 	pub const MIN_NUM_DIGITS: usize = 4usize;
 	pub const MAX_NUM_DIGITS: usize = 5usize;
 	pub(crate) const TOKEN_COLON: char = ':';
@@ -85,7 +85,7 @@ impl<'a> ArxivId<'a> {
 	/// let id = ArxivId::new(2011, 1, "00001", ArticleVersion::Num(1));
 	/// ```
 	#[inline]
-	pub const fn new(year: u16, month: u8, number: &'a str, version: ArticleVersion) -> Self {
+	pub const fn new(year: i16, month: i8, number: &'a str, version: ArticleVersion) -> Self {
 		Self {
 			year,
 			month,
@@ -109,7 +109,7 @@ impl<'a> ArxivId<'a> {
 	/// let id = ArxivId::new_latest(2011, 1, "00001");
 	/// ```
 	#[inline]
-	pub const fn new_latest(year: u16, month: u8, id: &'a str) -> Self {
+	pub const fn new_latest(year: i16, month: i8, id: &'a str) -> Self {
 		Self::new(year, month, id, ArticleVersion::Latest)
 	}
 
@@ -127,7 +127,7 @@ impl<'a> ArxivId<'a> {
 	/// let id = ArxivId::new_versioned(2011, 1, "00001", 1);
 	/// assert_eq!(id.version(), ArticleVersion::Num(1));
 	/// ```
-	pub const fn new_versioned(year: u16, month: u8, id: &'a str, version: u8) -> Self {
+	pub const fn new_versioned(year: i16, month: i8, id: &'a str, version: u8) -> Self {
 		Self::new(year, month, id, ArticleVersion::Num(version))
 	}
 
@@ -143,8 +143,8 @@ impl<'a> ArxivId<'a> {
 	/// assert!(id.is_ok());
 	/// ```
 	pub fn try_new(
-		year: u16,
-		month: u8,
+		year: i16,
+		month: i8,
 		number: &'a str,
 		version: ArticleVersion,
 	) -> ArxivIdResult {
@@ -177,7 +177,7 @@ impl<'a> ArxivId<'a> {
 	/// assert!(id.is_ok());
 	/// ```
 	#[inline]
-	pub fn try_latest(year: u16, month: u8, number: &'a str) -> ArxivIdResult {
+	pub fn try_latest(year: i16, month: i8, number: &'a str) -> ArxivIdResult {
 		Self::try_new(year, month, number, ArticleVersion::Latest)
 	}
 
@@ -198,7 +198,7 @@ impl<'a> ArxivId<'a> {
 	/// ```
 	#[must_use]
 	#[inline]
-	pub const fn year(&self) -> u16 {
+	pub const fn year(&self) -> i16 {
 		self.year
 	}
 
@@ -213,7 +213,7 @@ impl<'a> ArxivId<'a> {
 	/// ```
 	#[must_use]
 	#[inline]
-	pub const fn month(&self) -> u8 {
+	pub const fn month(&self) -> i8 {
 		self.month
 	}
 
@@ -316,10 +316,10 @@ impl<'a> TryFrom<&'a str> for ArxivId<'a> {
 		let numbervv = inner_parts[1];
 
 		// validate and compose the final Arxiv struct
-		let year = date[0..2].parse::<u16>().map_err(|_| InvalidYear)?;
-		let month = date[2..4].parse::<u8>().map_err(|_| InvalidMonth)?;
+		let year = date[0..2].parse::<i16>().map_err(|_| InvalidYear)?;
+		let month = date[2..4].parse::<i8>().map_err(|_| InvalidMonth)?;
 		let (number, version) = parse_numbervv(numbervv).ok_or(ExpectedNumberVv)?;
-		ArxivId::try_new(year + 2000, month, number, version)
+		ArxivId::try_new(year + 2000i16, month, number, version)
 	}
 }
 
@@ -456,7 +456,7 @@ mod tests_parse_err {
 
 	#[test]
 	fn invalid_month() {
-		let maybe_id = ArxivId::try_latest(2007, u8::MAX, "00001");
+		let maybe_id = ArxivId::try_latest(2007, i8::MAX, "00001");
 		assert_eq!(maybe_id, Err(ArxivIdError::InvalidMonth));
 	}
 
