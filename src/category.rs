@@ -214,6 +214,36 @@ pub enum Archive {
 }
 
 impl Archive {
+	/// Checks if the archive contains any nested subjects
+	///
+	/// ```
+	/// use arxiv::Archive;
+	///
+	/// assert!(Archive::GrQc);
+	/// assert!(Archive::HepEx);
+	/// assert!(Archive::HepLat);
+	/// assert!(Archive::HepPh);
+	/// assert!(Archive::HepTh);
+	/// assert!(Archive::MathPh);
+	/// assert!(Archive::NuclEx);
+	/// assert!(Archive::NuclTh);
+	/// assert!(Archive::QuantPh);
+	/// ```
+	pub const fn contains_subjects(&self) -> bool {
+		matches!(
+			self,
+			Self::GrQc
+				| Self::HepEx
+				| Self::HepLat
+				| Self::HepPh
+				| Self::HepTh
+				| Self::MathPh
+				| Self::NuclEx
+				| Self::NuclTh
+				| Self::QuantPh
+		)
+	}
+
 	/// Converts the article identifier to a URL where the abstract page is.
 	///
 	/// ```

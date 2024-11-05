@@ -16,6 +16,7 @@ This version marks the first stable release of the library. The API has been sig
 - Introduce `ArticleIdError::ExpectedBeginningLiteral`, `ArticleIdError::ExpectedNumberVv` variants
 - implement `Copy` for: `ArticleId`, `CategoryId`, `Stamp`
 - implement `TryFrom<&'a str>` for: `ArticleId`, `CategoryId`, `Stamp`
+- `Archive`: add `contains_subjects()` method
 - `ArticleId`: make `number` and `version` fields public
 - `ArticleId`: add `new()` and `new_latest()` methods (replacing `new_unchecked()` and `new_unchecked_latest()` respectively)
 - `ArticleId`: add `as_unique_ident()` method, which returns a unique identifier for the arXiv article in the form of "YYMM.NNNNN"
