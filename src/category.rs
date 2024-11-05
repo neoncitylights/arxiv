@@ -269,6 +269,13 @@ impl FromStr for ArxivArchive {
 	}
 }
 
+#[cfg(feature = "url")]
+impl From<ArxivArchive> for url::Url {
+	fn from(archive: ArxivArchive) -> url::Url {
+		url::Url::parse(&format!("https://arxiv.org/archive/{}", archive)).unwrap()
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;

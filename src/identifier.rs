@@ -23,7 +23,7 @@ pub enum ArxivIdError {
 impl Error for ArxivIdError {}
 
 impl Display for ArxivIdError {
-	fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		match self {
 			Self::ExpectedBeginningLiteral => {
 				f.write_str("Expected the identifier to start with the literal \"arXiv\".")
@@ -280,18 +280,30 @@ impl<'a> ArxivId<'a> {
 	pub fn set_latest(&mut self) {
 		self.version = ArticleVersion::Latest;
 	}
-}
 
-impl<'a> Display for ArxivId<'a> {
-	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+	/// Display the id as a unique identifier (after the arXiv literal)
+	///
+	/// ```
+	/// use arxiv::{ArxivId};
+	///
+	/// let id = ArxivId::new_versioned(2020, 10, "14462", 2);
+	/// assert_eq!(id.as_unique_ident(), "2010.14462");
+	/// ```
+	pub fn as_unique_ident(&self) -> String {
 		let mut year_str = self.year.to_string();
 		let (_, half_year) = year_str.as_mut_str().split_at(2);
 
 		if self.number.len() == 4usize {
-			write!(f, "arXiv:{:02}{:02}.{:04}{}", half_year, self.month, self.number, self.version)
+			format!("{:02}{:02}.{:04}", half_year, self.month, self.number)
 		} else {
-			write!(f, "arXiv:{:02}{:02}.{:05}{}", half_year, self.month, self.number, self.version)
+			format!("{:02}{:02}.{:05}", half_year, self.month, self.number)
 		}
+	}
+}
+
+impl<'a> Display for ArxivId<'a> {
+	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+		write!(f, "arXiv:{}{}", self.as_unique_ident(), self.version)
 	}
 }
 
@@ -320,6 +332,13 @@ impl<'a> TryFrom<&'a str> for ArxivId<'a> {
 		let month = date[2..4].parse::<i8>().map_err(|_| InvalidMonth)?;
 		let (number, version) = parse_numbervv(numbervv).ok_or(ExpectedNumberVv)?;
 		ArxivId::try_new(year + 2000i16, month, number, version)
+	}
+}
+
+#[cfg(feature = "url")]
+impl<'a> From<ArxivId<'a>> for url::Url {
+	fn from(id: ArxivId<'a>) -> url::Url {
+		url::Url::parse(&format!("http://arxiv.org/abs/{}", id.as_unique_ident())).unwrap()
 	}
 }
 

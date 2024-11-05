@@ -15,6 +15,9 @@
 - `ArxivId`: make `number` and `version` fields public
 - `ArxivId`: add `new()` and `new_latest()` methods (replacing `new_unchecked()` and `new_unchecked_latest()` respectively)
 - `ArxivStamp`: make all fields public
+- Introduce a crate feature `url`. This optionally installs the "url" dependency, and allows creating a `url::Url` instance from an `ArxivId` or `ArxivCategoryId` via:
+  - `impl<'a> From<ArxivId<'a>> for url::Url`
+  - `impl<'a> From<ArxivCategoryId<'a>> for url::Url`
 
 ### Breaking changes
 - MSRV: Bumps the minimum supported Rust version from 1.63.0 to 1.70.0, since jiff 0.1.14 requires 1.70.0
