@@ -2,11 +2,17 @@
 
 [![License][license-badge]][license-url]
 [![CI][ci-badge]][ci-url]
+[![Nightly Docs][docs-nightly-badge]][docs-nightly-url]
+[![Docs.rs][docs-badge]][docs-url]
 
 [license-badge]: https://img.shields.io/badge/License-MIT%20%26%20Apache%202.0-blue?style=flat-square
 [license-url]: #license
 [ci-badge]: https://img.shields.io/github/actions/workflow/status/neoncitylights/arxiv/.github/workflows/main.yml?style=flat-square
 [ci-url]: https://github.com/neoncitylights/arxiv/actions/workflows/main.yml
+[docs-nightly-badge]: https://img.shields.io/github/deployments/neoncitylights/arxiv/github-pages?style=flat-square&label=nightly%20docs
+[docs-nightly-url]: https://neoncitylights.github.io/arxiv/arxiv/
+[docs-badge]: https://img.shields.io/docsrs/arxiv?style=flat-square&label=docs.rs
+[docs-url]: https://docs.rs/arxiv
 
 A Rust library for parsing `arXiv` categories, identifiers and references.
 
