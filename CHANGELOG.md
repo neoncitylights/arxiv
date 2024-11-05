@@ -21,6 +21,7 @@
 - Migrate date handling from the time crate to the jiff crate
 - `ArxivIdError`: now marked with `#[non_exhaustive]`
 - `ArxivIdError`: removed `ArxividError::Syntax` variant
+- `ArxivStampError`: now marked with `#[non_exhaustive]`
 - `ArxivStampError`: the `InvalidDate` variant no longer contains any associated data
 - Due to lifetimes, remove implementation of `FromStr` for: `ArxivId`, `ArxivCategoryId`, `ArxivStamp`
 - `ArxivId`: change `number` field type from `String` to `&'a str`
