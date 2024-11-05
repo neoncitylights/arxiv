@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Bug fixes
+- Fix `ArxivId`'s implementation of `Display` to conditionally include the version number within the formatted string (depending on if it's the latest version or a specific version)
 - Fix `ArxivId::try_new()` to check if the given number string is all ASCII digits
 - Fix `ArxivId::try_new()` to return `ArxivIdError::InvalidYear`/`ArxivIdError::InvalidMonth` for invalid year/months instead of `ArxivIdError::Syntax` for either
 

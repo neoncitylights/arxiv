@@ -288,9 +288,9 @@ impl<'a> Display for ArxivId<'a> {
 		let (_, half_year) = year_str.as_mut_str().split_at(2);
 
 		if self.number.len() == 4usize {
-			write!(f, "arXiv:{:02}{:02}.{:04}", half_year, self.month, self.number)
+			write!(f, "arXiv:{:02}{:02}.{:04}{}", half_year, self.month, self.number, self.version)
 		} else {
-			write!(f, "arXiv:{:02}{:02}.{:05}", half_year, self.month, self.number)
+			write!(f, "arXiv:{:02}{:02}.{:05}{}", half_year, self.month, self.number, self.version)
 		}
 	}
 }
@@ -337,6 +337,15 @@ impl From<u8> for ArticleVersion {
 	}
 }
 
+impl Display for ArticleVersion {
+	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+		match self {
+			Self::Latest => f.write_str(""),
+			Self::Num(v) => write!(f, "v{}", v),
+		}
+	}
+}
+
 /// Parses a string in the format of "number{vV}",
 /// where:
 /// - `number` is a unique integer up 4 to 5 digits
@@ -374,6 +383,23 @@ pub(crate) fn parse_numbervv(s: &str) -> Option<(&str, ArticleVersion)> {
 	}
 
 	Some((number, version))
+}
+
+#[cfg(test)]
+mod test_display {
+    use super::ArxivId;
+
+	#[test]
+	fn with_version() {
+		let id = ArxivId::new_versioned(2007, 1, "0001", 1);
+		assert_eq!(id.to_string(), "arXiv:0701.0001v1");
+	}
+
+	#[test]
+	fn without_version() {
+		let id = ArxivId::new_latest(2007, 1, "0001");
+		assert_eq!(id.to_string(), "arXiv:0701.0001");
+	}
 }
 
 #[cfg(test)]
