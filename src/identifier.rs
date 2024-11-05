@@ -62,10 +62,10 @@ pub struct ArxivId<'a> {
 impl<'a> ArxivId<'a> {
 	pub const MIN_YEAR: i16 = 2007i16;
 	pub const MAX_YEAR: i16 = 2099i16;
-	pub const MIN_MONTH: i8 = 1i8;
-	pub const MAX_MONTH: i8 = 12i8;
 	pub const MIN_NUM_DIGITS: usize = 4usize;
 	pub const MAX_NUM_DIGITS: usize = 5usize;
+	pub(crate) const MIN_MONTH: i8 = 1i8;
+	pub(crate) const MAX_MONTH: i8 = 12i8;
 	pub(crate) const TOKEN_COLON: char = ':';
 	pub(crate) const TOKEN_DOT: char = '.';
 	pub(crate) const TOKEN_VERSION: char = 'v';

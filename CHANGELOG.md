@@ -23,8 +23,10 @@
 - `ArxivStampError`: the `InvalidDate` variant no longer contains any associated data
 - Due to lifetimes, remove implementation of `FromStr` for: `ArxivId`, `ArxivCategoryId`, `ArxivStamp`
 - `ArxivId`: change `number` field type from `String` to `&'a str`
-- `ArxivId`: change `year` field type from `u16` to `i16` to sync with jiff crate
-- `ArxivId`: change `month` field type from `u8` to `i8` to sync with jiff crate
+- `ArxivId`: change `year` field type from `u16` to `i16` to sync with jiff
+- `ArxivId`: change `month` field type from `u8` to `i8` to sync with jiff
+- `ArxivId`: change `MIN_YEAR`, `MAX_YEAR` constants from `u16` to `i16` to sync with jiff
+- `ArxivId`: made `MIN_MONTH`, `MAX_MONTH` constants private
 - `ArxivId`: change `version` field type from `Option<u8>` to `ArticleVersion`
 - `ArxivId`: remove `new_unchecked()` and `new_unchecked_latest()`
 - `ArxivStamp`: change `category` field type from `Option<ArxivCategoryId>` to `ArxivCategoryId<'a>`
