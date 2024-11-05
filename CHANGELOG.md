@@ -24,7 +24,11 @@
 - `ArxivId`: remove `new_unchecked()` and `new_unchecked_latest()`
 - `ArxivStamp`: change `category` field type from `Option<ArxivCategoryId>` to `ArxivCategoryId<'a>`
 - `ArxivStamp`: remove all getter methods (since fields are now public)
+- `ArxivStamp`: `submitted` field now uses `jiff::civil::Date` instead of `time::Date`
 - `ArxivCategoryId`: change `subject` field type from `String` to `&'a str`
+
+### Internal
+- Cleaned up implementation of `Display` for `ArxivStamp`.
 
 ## 0.1.0 (2023-03-28)
 

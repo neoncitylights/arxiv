@@ -9,11 +9,10 @@ repository = "https://github.com/neoncitylights/arxiv"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 edition = "2021"
-rust-version = "1.67.0"
+rust-version = "1.70.0"
 keywords = ["arxiv"]
 categories = ["parsing", "text-processing"]
 include = ["src", "LICENSE-APACHE", "LICENSE-MIT"]
 
-[dependencies.time]
-version = "0.3.20"
-features = ["macros", "parsing"]
+[dependencies]
+jiff = "0.1.14"
