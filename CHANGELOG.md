@@ -20,9 +20,9 @@ This version marks the first stable release of the library. The API has been sig
 - `ArticleId`: add `new()` and `new_latest()` methods (replacing `new_unchecked()` and `new_unchecked_latest()` respectively)
 - `ArticleId`: add `as_unique_ident()` method, which returns a unique identifier for the arXiv article in the form of "YYMM.NNNNN"
 - `Stamp`: make all fields public
-- Introduce a crate feature `url`. This optionally installs the "url" dependency, and allows creating a `url::Url` instance from an `ArticleId` or `CategoryId` via:
-  - `impl<'a> From<ArticleId<'a>> for url::Url`
-  - `impl<'a> From<ArticleCategoryId<'a>> for url::Url`
+- Introduce a crate feature `url`. This optionally installs the "url" dependency, and allows creating a `url::Url` instance from an `Archive` or `ArticleId` via:
+  - `impl<'a> From<Archive> for url::Url`, `Archive::as_url()`
+  - `impl<'a> From<ArticleId<'a>> for url::Url`, `ArticleId::as_url()`
 
 ### Breaking changes
 - MSRV: Bumps the minimum supported Rust version from 1.63.0 to 1.70.0, since jiff 0.1.14 requires 1.70.0

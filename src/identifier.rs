@@ -299,6 +299,21 @@ impl<'a> ArticleId<'a> {
 			format!("{:02}{:02}.{:05}", half_year, self.month, self.number)
 		}
 	}
+
+	/// Converts the article identifier to a URL where the abstract page is.
+	///
+	/// ```
+	/// use arxiv::ArticleId;
+	/// use url::Url;
+	///
+	/// let id = ArticleId::new_versioned(2020, 10, "14462", 2);
+	/// let url = Url::from(id);
+	/// assert_eq!(url.to_string(), "https://arxiv.org/abs/2010.14462v2");
+	/// ```
+	#[cfg(feature = "url")]
+	pub fn as_url(&self) -> url::Url {
+		url::Url::from(*self)
+	}
 }
 
 impl<'a> Display for ArticleId<'a> {
@@ -338,7 +353,8 @@ impl<'a> TryFrom<&'a str> for ArticleId<'a> {
 #[cfg(feature = "url")]
 impl<'a> From<ArticleId<'a>> for url::Url {
 	fn from(id: ArticleId<'a>) -> url::Url {
-		url::Url::parse(&format!("http://arxiv.org/abs/{}", id.as_unique_ident())).unwrap()
+		url::Url::parse(&format!("https://arxiv.org/abs/{}{}", id.as_unique_ident(), id.version,))
+			.unwrap()
 	}
 }
 
@@ -509,5 +525,22 @@ mod tests_parse_err {
 	fn invalid_id() {
 		let maybe_id = ArticleId::try_latest(2007, 11, "");
 		assert_eq!(maybe_id, Err(ArticleIdError::InvalidId));
+	}
+}
+
+#[cfg(test)]
+#[cfg(feature = "url")]
+mod tests_url {
+	use super::*;
+	use url::Url;
+
+	#[test]
+	fn url_from_id() {
+		let id = ArticleId::try_new(2007, 01, "00001", ArticleVersion::Latest).unwrap();
+		let url = Url::from(id);
+		assert_eq!(url.scheme(), "https");
+		assert_eq!(url.domain(), Some("arxiv.org"));
+		assert_eq!(url.path(), "/abs/0701.00001");
+		assert_eq!(url.to_string(), "https://arxiv.org/abs/0701.00001");
 	}
 }

@@ -213,6 +213,23 @@ pub enum Archive {
 	Stat,
 }
 
+impl Archive {
+	/// Converts the article identifier to a URL where the abstract page is.
+	///
+	/// ```
+	/// use arxiv::Archive;
+	/// use url::Url;
+	///
+	/// let id = Archive::AstroPh;
+	/// let url = Url::from(id);
+	/// assert_eq!(url.to_string(), "https://arxiv.org/archive/astro-ph");
+	/// ```
+	#[cfg(feature = "url")]
+	pub fn as_url(&self) -> url::Url {
+		url::Url::from(*self)
+	}
+}
+
 impl Display for Archive {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		match self {
@@ -302,5 +319,22 @@ mod tests {
 	fn parse_archive() {
 		let archive = Archive::from_str("astro-ph");
 		assert_eq!(archive, Ok(Archive::AstroPh));
+	}
+}
+
+#[cfg(test)]
+#[cfg(feature = "url")]
+mod tests_url_archive {
+	use super::*;
+	use url::Url;
+
+	#[test]
+	fn url_from_id() {
+		let id = Archive::AstroPh;
+		let url = Url::from(id);
+		assert_eq!(url.scheme(), "https");
+		assert_eq!(url.domain(), Some("arxiv.org"));
+		assert_eq!(url.path(), "/archive/astro-ph");
+		assert_eq!(url.to_string(), "https://arxiv.org/archive/astro-ph");
 	}
 }
