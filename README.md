@@ -24,33 +24,33 @@ cargo add arxiv
 
 ## Usage
 
-### Identifiers
+## Identifiers
 ```rust
-use arxiv::{ArticleVersion, ArxivId};
+use arxiv::{ArticleId, ArticleVersion};
 
-let id = ArxivId::try_from("arXiv:9912.12345v2").unwrap();
+let id = ArticleId::try_from("arXiv:9912.12345v2").unwrap();
 assert_eq!(id.month(), 12);
 assert_eq!(id.year(), 2099);
 assert_eq!(id.number(), "12345");
 assert_eq!(id.version(), ArticleVersion::Num(2));
 ```
 
-### Categories
+## Categories
 ```rust
-use arxiv::{ArxivArchive, ArxivCategoryId, ArxivGroup};
+use arxiv::{Archive, CategoryId, Group};
 
-let category = ArxivCategoryId::try_from("astro-ph.HE").unwrap();
-assert_eq!(category.group(), ArxivGroup::Physics);
-assert_eq!(category.archive(), ArxivArchive::AstroPh);
+let category = CategoryId::try_from("astro-ph.HE").unwrap();
+assert_eq!(category.group(), Group::Physics);
+assert_eq!(category.archive(), Archive::AstroPh);
 assert_eq!(category.subject(), "HE");
 ```
 
-### Stamps
+## Stamps
 ```rust
-use arxiv::{ArxivArchive, ArxivCategoryId, ArxivStamp};
+use arxiv::{Archive, CategoryId, Stamp};
 
-let stamp = ArxivStamp::try_from("arXiv:0706.0001v1 [q-bio.CB] 1 Jun 2007").unwrap();
-assert_eq!(stamp.category, ArxivCategoryId::try_new(ArxivArchive::QBio, "CB").unwrap());
+let stamp = Stamp::try_from("arXiv:0706.0001v1 [q-bio.CB] 1 Jun 2007").unwrap();
+assert_eq!(stamp.category, CategoryId::try_new(Archive::QBio, "CB").unwrap());
 assert_eq!(stamp.submitted.year(), 2007);
 ```
 

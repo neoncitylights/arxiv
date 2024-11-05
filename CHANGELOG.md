@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+This version marks the first stable release of the library. The API has been significantly reworked since the initial release to be more idiomatic. The dependency for handling dates was switched from the `time` crate to the `jiff` crate, and the MSRV has been bumped to 1.70.0 to align with the `jiff` crate.
+
 ### Documentation
 - Fixed a typo in the summary of the `ArxivIdError::InvalidId` variant
 
@@ -22,6 +24,16 @@
 ### Breaking changes
 - MSRV: Bumps the minimum supported Rust version from 1.63.0 to 1.70.0, since jiff 0.1.14 requires 1.70.0
 - Migrate date handling from the time crate to the jiff crate
+- Rename `ArxivArchive` to `Archive`
+- Rename `ArxivId` to `ArticleId`
+- Rename `ArxivIdError` to `ArticleIdError`
+- Rename `ArxivIdResult` to `ArticleIdResult`
+- Rename `ArxivIdScheme` to `ArticleIdScheme`
+- Rename `ArxivCategoryId` to `Category`
+- Rename `ArxivGroup` to `Group`
+- Rename `ArxivStamp` to `Stamp`
+- Rename `ArxivStampError` to `StampError`
+- Rename `ArxivStampResult` to `StampResult`
 - `ArxivIdError`: now marked with `#[non_exhaustive]`
 - `ArxivIdError`: removed `ArxividError::Syntax` variant
 - `ArxivStampError`: now marked with `#[non_exhaustive]`

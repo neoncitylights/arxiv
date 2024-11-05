@@ -4,9 +4,9 @@
 //!
 //! ## Identifiers
 //! ```rust
-//! use arxiv::{ArticleVersion, ArxivId};
+//! use arxiv::{ArticleId, ArticleVersion};
 //!
-//! let id = ArxivId::try_from("arXiv:9912.12345v2").unwrap();
+//! let id = ArticleId::try_from("arXiv:9912.12345v2").unwrap();
 //! assert_eq!(id.month(), 12);
 //! assert_eq!(id.year(), 2099);
 //! assert_eq!(id.number(), "12345");
@@ -15,20 +15,20 @@
 //!
 //! ## Categories
 //! ```rust
-//! use arxiv::{ArxivArchive, ArxivCategoryId, ArxivGroup};
+//! use arxiv::{Archive, CategoryId, Group};
 //!
-//! let category = ArxivCategoryId::try_from("astro-ph.HE").unwrap();
-//! assert_eq!(category.group(), ArxivGroup::Physics);
-//! assert_eq!(category.archive(), ArxivArchive::AstroPh);
+//! let category = CategoryId::try_from("astro-ph.HE").unwrap();
+//! assert_eq!(category.group(), Group::Physics);
+//! assert_eq!(category.archive(), Archive::AstroPh);
 //! assert_eq!(category.subject(), "HE");
 //! ```
 //!
 //! ## Stamps
 //! ```rust
-//! use arxiv::{ArxivArchive, ArxivCategoryId, ArxivStamp};
+//! use arxiv::{Archive, CategoryId, Stamp};
 //!
-//! let stamp = ArxivStamp::try_from("arXiv:0706.0001v1 [q-bio.CB] 1 Jun 2007").unwrap();
-//! assert_eq!(stamp.category, ArxivCategoryId::try_new(ArxivArchive::QBio, "CB").unwrap());
+//! let stamp = Stamp::try_from("arXiv:0706.0001v1 [q-bio.CB] 1 Jun 2007").unwrap();
+//! assert_eq!(stamp.category, CategoryId::try_new(Archive::QBio, "CB").unwrap());
 //! assert_eq!(stamp.submitted.year(), 2007);
 //! ```
 
@@ -42,7 +42,7 @@ pub use crate::stamp::*;
 
 /// Represents the versioned grammar that defines an arXiv identifier
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ArxivIdScheme {
+pub enum ArticleIdScheme {
 	/// Identifier scheme up to [March 2007][arxiv-march-2007]
 	///
 	/// [arxiv-march-2007]: https://info.arxiv.org/help/arxiv_identifier.html#identifiers-up-to-march-2007-9107-0703

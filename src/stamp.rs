@@ -1,4 +1,4 @@
-use crate::{ArxivCategoryId, ArxivId, ArxivIdError};
+use crate::{ArticleId, ArticleIdError, CategoryId};
 use jiff::civil::Date;
 use jiff::fmt::strtime::format as jiff_format;
 use jiff::fmt::strtime::parse as jiff_parse;
@@ -6,29 +6,29 @@ use jiff::Error as JiffError;
 use std::error::Error;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
-/// Convenient type alias for a [`Result`] holding either an [`ArxivStamp`] or [`ArxivStampError`]
-pub type ArxivStampResult<'a> = Result<ArxivStamp<'a>, ArxivStampError>;
+/// Convenient type alias for a [`Result`] holding either a [`Stamp`] or [`StampError`]
+pub type StampResult<'a> = Result<Stamp<'a>, StampError>;
 
 /// An error that can occur when parsing and validating arXiv stamps
 ///
 /// # Examples
 /// ```
-/// use arxiv::ArxivStamp;
+/// use arxiv::Stamp;
 ///
-/// let stamp = ArxivStamp::try_from("arXiv:2001.00001 [cs.LG] 1 Jan 2000");
+/// let stamp = Stamp::try_from("arXiv:2001.00001 [cs.LG] 1 Jan 2000");
 /// ```
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ArxivStampError {
-	InvalidArxivId(ArxivIdError),
+pub enum StampError {
+	InvalidArxivId(ArticleIdError),
 	InvalidDate,
 	InvalidCategory,
 	NotEnoughComponents,
 }
 
-impl Error for ArxivStampError {}
+impl Error for StampError {}
 
-impl Display for ArxivStampError {
+impl Display for StampError {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		match self {
 			Self::InvalidArxivId(e) => write!(f, "Invalid arXiv ID: {}", e),
@@ -41,28 +41,28 @@ impl Display for ArxivStampError {
 
 /// A stamp that is added onto the side of PDF version of arXiv articles
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ArxivStamp<'a> {
-	pub id: ArxivId<'a>,
-	pub category: ArxivCategoryId<'a>,
+pub struct Stamp<'a> {
+	pub id: ArticleId<'a>,
+	pub category: CategoryId<'a>,
 	pub submitted: Date,
 }
 
-impl<'a> ArxivStamp<'a> {
-	/// Manually create a new [`ArxivStamp`] from the given components.
+impl<'a> Stamp<'a> {
+	/// Manually create a new [`Stamp`] from the given components.
 
 	/// # Examples
 	/// ```
-	/// use arxiv::{ArxivArchive, ArxivCategoryId, ArxivId, ArxivStamp};
+	/// use arxiv::{Archive, CategoryId, ArticleId, Stamp};
 	/// use jiff::civil::date;
 	///
-	/// let stamp = ArxivStamp::new(
-	///     ArxivId::try_latest(2011, 1, "00001").unwrap(),
-	///     ArxivCategoryId::try_new(ArxivArchive::Cs, "LG").unwrap(),
+	/// let stamp = Stamp::new(
+	///     ArticleId::try_latest(2011, 1, "00001").unwrap(),
+	///     CategoryId::try_new(Archive::Cs, "LG").unwrap(),
 	///     date(2011, 1, 1)
 	/// );
 	/// ```
 	#[inline]
-	pub const fn new(id: ArxivId<'a>, category: ArxivCategoryId<'a>, submitted: Date) -> Self {
+	pub const fn new(id: ArticleId<'a>, category: CategoryId<'a>, submitted: Date) -> Self {
 		Self {
 			id,
 			category,
@@ -71,7 +71,7 @@ impl<'a> ArxivStamp<'a> {
 	}
 }
 
-impl<'a> Display for ArxivStamp<'a> {
+impl<'a> Display for Stamp<'a> {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		write!(
 			f,
@@ -83,11 +83,11 @@ impl<'a> Display for ArxivStamp<'a> {
 	}
 }
 
-impl<'a> TryFrom<&'a str> for ArxivStamp<'a> {
-	type Error = ArxivStampError;
+impl<'a> TryFrom<&'a str> for Stamp<'a> {
+	type Error = StampError;
 
 	fn try_from(s: &'a str) -> Result<Self, Self::Error> {
-		use ArxivStampError::*;
+		use StampError::*;
 
 		let wsp_indices: Vec<_> = s.match_indices(' ').collect();
 		if wsp_indices.len() < 2 {
@@ -96,16 +96,16 @@ impl<'a> TryFrom<&'a str> for ArxivStamp<'a> {
 
 		// parse an id
 		let space1 = wsp_indices[0].0;
-		let id = ArxivId::try_from(&s[0..space1]).map_err(InvalidArxivId)?;
+		let id = ArticleId::try_from(&s[0..space1]).map_err(InvalidArxivId)?;
 
 		// parse a category
 		let space2 = wsp_indices[1].0;
 		let cat_str = &s[space1 + 1..space2];
-		let category = ArxivCategoryId::parse_bracketed(cat_str).ok_or(InvalidCategory)?;
+		let category = CategoryId::parse_bracketed(cat_str).ok_or(InvalidCategory)?;
 
 		// parse a date
 		let date_str = &s[space2 + 1..];
-		let date = parse_date(date_str).map_err(|_| ArxivStampError::InvalidDate)?;
+		let date = parse_date(date_str).map_err(|_| InvalidDate)?;
 
 		Ok(Self::new(id, category, date))
 	}
@@ -122,14 +122,14 @@ fn parse_date(date_str: &str) -> Result<Date, JiffError> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::ArxivArchive;
+	use crate::Archive;
 	use jiff::civil::date;
 
 	#[test]
 	fn display_stamp() {
-		let stamp = ArxivStamp::new(
-			ArxivId::try_from("arXiv:2011.00001").unwrap(),
-			ArxivCategoryId::try_new(ArxivArchive::Cs, "LG").unwrap(),
+		let stamp = Stamp::new(
+			ArticleId::try_from("arXiv:2011.00001").unwrap(),
+			CategoryId::try_new(Archive::Cs, "LG").unwrap(),
 			date(2011, 1, 1),
 		);
 		assert_eq!(stamp.to_string(), "arXiv:2011.00001 [cs.LG] 1 Jan 2011");
@@ -139,18 +139,18 @@ mod tests {
 #[cfg(test)]
 mod tests_parse_ok {
 	use super::*;
-	use crate::ArxivArchive;
+	use crate::Archive;
 	use jiff::civil::date;
 
 	#[test]
 	fn parse_stamp() {
 		let stamp = "arXiv:2001.00001 [cs.LG] 1 Jan 2000";
-		let parsed = ArxivStamp::try_from(stamp);
+		let parsed = Stamp::try_from(stamp);
 		assert_eq!(
 			parsed,
-			Ok(ArxivStamp::new(
-				ArxivId::try_from("arXiv:2001.00001").unwrap(),
-				ArxivCategoryId::try_new(ArxivArchive::Cs, "LG").unwrap(),
+			Ok(Stamp::new(
+				ArticleId::try_from("arXiv:2001.00001").unwrap(),
+				CategoryId::try_new(Archive::Cs, "LG").unwrap(),
 				date(2000, 1, 1)
 			))
 		);
@@ -159,13 +159,13 @@ mod tests_parse_ok {
 	#[test]
 	fn parse_stamp_readme() {
 		let stamp = "arXiv:0706.0001v1 [q-bio.CB] 1 Jun 2007";
-		let parsed = ArxivStamp::try_from(stamp);
+		let parsed = Stamp::try_from(stamp);
 
 		assert_eq!(
 			parsed,
-			Ok(ArxivStamp::new(
-				ArxivId::try_from("arXiv:0706.0001v1").unwrap(),
-				ArxivCategoryId::try_new(ArxivArchive::QBio, "CB").unwrap(),
+			Ok(Stamp::new(
+				ArticleId::try_from("arXiv:0706.0001v1").unwrap(),
+				CategoryId::try_new(Archive::QBio, "CB").unwrap(),
 				date(2007, 6, 1)
 			))
 		)
@@ -179,35 +179,35 @@ mod tests_parse_err {
 	#[test]
 	fn parse_stamp_empty() {
 		let stamp = "";
-		let parsed = ArxivStamp::try_from(stamp);
-		assert_eq!(parsed, Err(ArxivStampError::NotEnoughComponents));
+		let parsed = Stamp::try_from(stamp);
+		assert_eq!(parsed, Err(StampError::NotEnoughComponents));
 	}
 
 	#[test]
 	fn parse_stamp_not_enough_components() {
 		let stamp = "arXiv:2001.00001";
-		let parsed = ArxivStamp::try_from(stamp);
-		assert_eq!(parsed, Err(ArxivStampError::NotEnoughComponents));
+		let parsed = Stamp::try_from(stamp);
+		assert_eq!(parsed, Err(StampError::NotEnoughComponents));
 	}
 
 	#[test]
 	fn parse_stamp_invalid_category() {
 		let stamp = "arXiv:2001.00001 [cs.LG 1 Jan 2000";
-		let parsed = ArxivStamp::try_from(stamp);
-		assert_eq!(parsed, Err(ArxivStampError::InvalidCategory));
+		let parsed = Stamp::try_from(stamp);
+		assert_eq!(parsed, Err(StampError::InvalidCategory));
 	}
 
 	#[test]
 	fn parse_stamp_invalid_date_day() {
 		let stamp = "arXiv:2001.00001 [cs.LG] 32 Jan 2000";
-		let parsed = ArxivStamp::try_from(stamp);
-		assert_eq!(parsed, Err(ArxivStampError::InvalidDate));
+		let parsed = Stamp::try_from(stamp);
+		assert_eq!(parsed, Err(StampError::InvalidDate));
 	}
 
 	#[test]
 	fn parse_stamp_invalid_date_month() {
 		let stamp = "arXiv:2001.00001 [cs.LG] 1 Zan 2000";
-		let parsed = ArxivStamp::try_from(stamp);
-		assert_eq!(parsed, Err(ArxivStampError::InvalidDate));
+		let parsed = Stamp::try_from(stamp);
+		assert_eq!(parsed, Err(StampError::InvalidDate));
 	}
 }
