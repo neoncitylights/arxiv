@@ -18,6 +18,7 @@
 ### Breaking changes
 - `ArxivIdError`: now marked with `#[non_exhaustive]`
 - `ArxivIdError`: removed `ArxividError::Syntax` variant
+- `ArxivStampError`: the `InvalidDate` variant no longer contains any associated data
 - Due to lifetimes, remove implementation of `FromStr` for: `ArxivId`, `ArxivCategoryId`, `ArxivStamp`
 - `ArxivId`: change `number` field type from `String` to `&'a str`
 - `ArxivId`: change `version` field type from `Option<u8>` to `ArticleVersion`
