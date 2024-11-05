@@ -90,8 +90,8 @@ impl<'a> ArxivCategoryId<'a> {
 	/// The subject class of the arXiv category
 	#[must_use]
 	#[inline]
-	pub fn subject(&self) -> String {
-		self.subject.to_owned()
+	pub fn subject(&self) -> &'a str {
+		self.subject
 	}
 }
 

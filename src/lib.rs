@@ -12,7 +12,7 @@
 //! let category = ArxivCategoryId::try_from("astro-ph.HE").unwrap();
 //! assert_eq!(category.group(), ArxivGroup::Physics);
 //! assert_eq!(category.archive(), ArxivArchive::AstroPh);
-//! assert_eq!(category.subject(), String::from("HE"));
+//! assert_eq!(category.subject(), "HE");
 //!
 //! // Parse an arXiv stamp
 //! let stamp = ArxivStamp::try_from("arXiv:0706.0001v1 [q-bio.CB] 1 Jun 2007").unwrap();
