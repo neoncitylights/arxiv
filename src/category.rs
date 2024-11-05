@@ -219,15 +219,15 @@ impl Archive {
 	/// ```
 	/// use arxiv::Archive;
 	///
-	/// assert!(Archive::GrQc);
-	/// assert!(Archive::HepEx);
-	/// assert!(Archive::HepLat);
-	/// assert!(Archive::HepPh);
-	/// assert!(Archive::HepTh);
-	/// assert!(Archive::MathPh);
-	/// assert!(Archive::NuclEx);
-	/// assert!(Archive::NuclTh);
-	/// assert!(Archive::QuantPh);
+	/// assert!(Archive::GrQc.contains_subjects());
+	/// assert!(Archive::HepEx.contains_subjects());
+	/// assert!(Archive::HepLat.contains_subjects());
+	/// assert!(Archive::HepPh.contains_subjects());
+	/// assert!(Archive::HepTh.contains_subjects());
+	/// assert!(Archive::MathPh.contains_subjects());
+	/// assert!(Archive::NuclEx.contains_subjects());
+	/// assert!(Archive::NuclTh.contains_subjects());
+	/// assert!(Archive::QuantPh.contains_subjects());
 	/// ```
 	pub const fn contains_subjects(&self) -> bool {
 		matches!(
