@@ -55,8 +55,8 @@ impl Display for ArxivIdError {
 pub struct ArxivId<'a> {
 	year: u16,
 	month: u8,
-	pub number: &'a str,
-	pub version: ArticleVersion,
+	number: &'a str,
+	version: ArticleVersion,
 }
 
 impl<'a> ArxivId<'a> {
@@ -125,7 +125,7 @@ impl<'a> ArxivId<'a> {
 	/// use arxiv::{ArticleVersion, ArxivId};
 	///
 	/// let id = ArxivId::new_versioned(2011, 1, "00001", 1);
-	/// assert_eq!(id.version, ArticleVersion::Num(1));
+	/// assert_eq!(id.version(), ArticleVersion::Num(1));
 	/// ```
 	pub const fn new_versioned(year: u16, month: u8, id: &'a str, version: u8) -> Self {
 		Self::new(year, month, id, ArticleVersion::Num(version))
@@ -254,10 +254,10 @@ impl<'a> ArxivId<'a> {
 	/// use arxiv::{ArticleVersion, ArxivId};
 	///
 	/// let mut id = ArxivId::try_from("arXiv:2001.00001").unwrap();
-	/// assert_eq!(id.version, ArticleVersion::Latest);
+	/// assert_eq!(id.version(), ArticleVersion::Latest);
 
 	/// id.set_version(1);
-	/// assert_eq!(id.version, ArticleVersion::Num(1));
+	/// assert_eq!(id.version(), ArticleVersion::Num(1));
 	/// ```
 	#[inline]
 	pub fn set_version(&mut self, version: u8) {
@@ -271,10 +271,10 @@ impl<'a> ArxivId<'a> {
 	/// use arxiv::{ArticleVersion, ArxivId};
 	///
 	/// let mut id = ArxivId::try_from("arXiv:2001.00001v1").unwrap();
-	/// assert_eq!(id.version, ArticleVersion::Num(1));
+	/// assert_eq!(id.version(), ArticleVersion::Num(1));
 	///
 	/// id.set_latest();
-	/// assert_eq!(id.version, ArticleVersion::Latest);
+	/// assert_eq!(id.version(), ArticleVersion::Latest);
 	/// ```
 	#[inline]
 	pub fn set_latest(&mut self) {
