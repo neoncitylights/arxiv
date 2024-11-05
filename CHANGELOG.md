@@ -16,12 +16,15 @@
 - `ArxivStamp`: make all fields public
 
 ### Breaking changes
-- MSRV: Bumps the minimum supported Rust version from 1.63.0 to 1.70.0
+- MSRV: Bumps the minimum supported Rust version from 1.63.0 to 1.70.0, since jiff 0.1.14 requires 1.70.0
+- Migrate date handling from the time crate to the jiff crate
 - `ArxivIdError`: now marked with `#[non_exhaustive]`
 - `ArxivIdError`: removed `ArxividError::Syntax` variant
 - `ArxivStampError`: the `InvalidDate` variant no longer contains any associated data
 - Due to lifetimes, remove implementation of `FromStr` for: `ArxivId`, `ArxivCategoryId`, `ArxivStamp`
 - `ArxivId`: change `number` field type from `String` to `&'a str`
+- `ArxivId`: change `year` field type from `u16` to `i16` to sync with jiff crate
+- `ArxivId`: change `month` field type from `u8` to `i8` to sync with jiff crate
 - `ArxivId`: change `version` field type from `Option<u8>` to `ArticleVersion`
 - `ArxivId`: remove `new_unchecked()` and `new_unchecked_latest()`
 - `ArxivStamp`: change `category` field type from `Option<ArxivCategoryId>` to `ArxivCategoryId<'a>`
