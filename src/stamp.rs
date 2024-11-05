@@ -52,7 +52,7 @@ impl<'a> Stamp<'a> {
 
 	/// # Examples
 	/// ```
-	/// use arxiv::{Archive, CategoryId, ArticleId, Stamp};
+	/// use arxiv::{Archive, ArticleId, CategoryId, Stamp};
 	/// use jiff::civil::date;
 	///
 	/// let stamp = Stamp::new(
