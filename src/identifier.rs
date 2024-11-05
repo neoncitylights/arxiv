@@ -314,7 +314,6 @@ impl<'a> TryFrom<&'a str> for ArxivId<'a> {
 
 		let date = inner_parts[0];
 		let numbervv = inner_parts[1];
-		println!("try from numbervv: {:?}", numbervv);
 
 		// validate and compose the final Arxiv struct
 		let year = date[0..2].parse::<u16>().map_err(|_| InvalidYear)?;

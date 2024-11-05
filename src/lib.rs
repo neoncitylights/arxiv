@@ -1,5 +1,4 @@
 //! ```rust
-//! use std::str::FromStr;
 //! use arxiv::*;
 //!
 //! // Parse an arXiv identifier
@@ -10,7 +9,7 @@
 //! assert_eq!(id.version, ArticleVersion::Num(2));
 //!
 //! // Parse an arXiv category
-//! let category = ArxivCategoryId::from_str("astro-ph.HE").unwrap();
+//! let category = ArxivCategoryId::try_from("astro-ph.HE").unwrap();
 //! assert_eq!(category.group(), ArxivGroup::Physics);
 //! assert_eq!(category.archive(), ArxivArchive::AstroPh);
 //! assert_eq!(category.subject(), String::from("HE"));
