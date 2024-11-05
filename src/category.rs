@@ -3,17 +3,17 @@ use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
 
 /// An identifier for arXiv categories, which are composed of an archive and category
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ArxivCategoryId {
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ArxivCategoryId<'a> {
 	group: ArxivGroup,
 	archive: ArxivArchive,
-	subject: String,
+	subject: &'a str,
 }
 
-impl ArxivCategoryId {
+impl<'a> ArxivCategoryId<'a> {
 	pub(crate) const TOKEN_DELIM: char = '.';
 
-	pub(super) const fn new(group: ArxivGroup, archive: ArxivArchive, subject: String) -> Self {
+	pub(super) const fn new(group: ArxivGroup, archive: ArxivArchive, subject: &'a str) -> Self {
 		Self {
 			group,
 			archive,
@@ -26,15 +26,14 @@ impl ArxivCategoryId {
 	/// Valid archive identifiers are listed under the official website's page for [category taxonomy][arxiv-cat].
 	///
 	/// [arxiv-cat]: <https://arxiv.org/category_taxonomy>
-	#[rustfmt::skip]
-	pub fn try_new(archive: ArxivArchive, subject: &str) -> Option<Self> {
+	pub fn try_new(archive: ArxivArchive, subject: &'a str) -> Option<Self> {
 		let is_valid = match archive {
 			ArxivArchive::AstroPh => matches!(subject, "CO" | "EP" | "GA" | "HE" | "IM" | "SR"),
-			ArxivArchive::CondMat => matches!(subject,
-					| "dis-nn" | "mes-hall" | "mtrl-sci"
-					| "other" | "quant-gas" | "soft"
-					| "stat-mech" | "str-el" | "supr-con"
-			),
+			ArxivArchive::CondMat => matches!(subject, |"dis-nn"| "mes-hall"
+				| "mtrl-sci" | "other"
+				| "quant-gas"
+				| "soft" | "stat-mech"
+				| "str-el" | "supr-con"),
 			ArxivArchive::Cs => COMPSCI_TABLE.binary_search(&subject).is_ok(),
 			ArxivArchive::Econ => matches!(subject, "EM" | "GN" | "TH"),
 			ArxivArchive::Eess => matches!(subject, "AS" | "IV" | "SP" | "SY"),
@@ -49,7 +48,10 @@ impl ArxivCategoryId {
 			ArxivArchive::NuclEx => subject.is_empty(),
 			ArxivArchive::NuclTh => subject.is_empty(),
 			ArxivArchive::Physics => PHYSICS_TABLE.binary_search(&subject).is_ok(),
-			ArxivArchive::QBio    => matches!(subject, "BM" | "CB" | "GN" | "MN" | "NC" | "OT" | "PE" | "QM" | "SC" | "TO"),
+			ArxivArchive::QBio => matches!(
+				subject,
+				"BM" | "CB" | "GN" | "MN" | "NC" | "OT" | "PE" | "QM" | "SC" | "TO"
+			),
 			ArxivArchive::QFin => {
 				matches!(subject, "CP" | "EC" | "GN" | "MF" | "PM" | "PR" | "RM" | "ST" | "SR")
 			}
@@ -58,7 +60,14 @@ impl ArxivCategoryId {
 		};
 
 		match is_valid {
-			true => Some(Self::new(ArxivGroup::from(archive), archive, String::from(subject))),
+			true => Some(Self::new(ArxivGroup::from(archive), archive, subject)),
+			false => None,
+		}
+	}
+
+	pub fn parse_bracketed(s: &'a str) -> Option<Self> {
+		match s.starts_with('[') && s.ends_with(']') {
+			true => Self::try_from(&s[1..s.len() - 1]).ok(),
 			false => None,
 		}
 	}
@@ -81,20 +90,20 @@ impl ArxivCategoryId {
 	/// The subject class of the arXiv category
 	#[must_use]
 	#[inline]
-	pub fn subject(&self) -> String {
-		self.subject.to_owned()
+	pub fn subject(&self) -> &'a str {
+		self.subject
 	}
 }
 
-impl Display for ArxivCategoryId {
+impl<'a> Display for ArxivCategoryId<'a> {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		write!(f, "{}.{}", self.archive, self.subject)
 	}
 }
 
-impl FromStr for ArxivCategoryId {
-	type Err = ();
-	fn from_str(s: &str) -> Result<Self, Self::Err> {
+impl<'a> TryFrom<&'a str> for ArxivCategoryId<'a> {
+	type Error = ();
+	fn try_from(s: &'a str) -> Result<Self, Self::Error> {
 		let parts: Vec<&str> = s.split(Self::TOKEN_DELIM).collect();
 		if parts.len() != 2 {
 			return Err(());
@@ -206,32 +215,28 @@ pub enum ArxivArchive {
 
 impl Display for ArxivArchive {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-		write!(
-			f,
-			"{}",
-			match self {
-				ArxivArchive::AstroPh => "astro-ph",
-				ArxivArchive::CondMat => "cond-mat",
-				ArxivArchive::Cs => "cs",
-				ArxivArchive::Econ => "econ",
-				ArxivArchive::Eess => "eess",
-				ArxivArchive::GrQc => "gr-qc",
-				ArxivArchive::HepEx => "hep-ex",
-				ArxivArchive::HepLat => "hep-lat",
-				ArxivArchive::HepPh => "hep-ph",
-				ArxivArchive::HepTh => "hep-th",
-				ArxivArchive::MathPh => "math-ph",
-				ArxivArchive::Math => "math",
-				ArxivArchive::Nlin => "nlin",
-				ArxivArchive::NuclEx => "nucl-ex",
-				ArxivArchive::NuclTh => "nucl-th",
-				ArxivArchive::Physics => "physics",
-				ArxivArchive::QBio => "q-bio",
-				ArxivArchive::QFin => "q-fin",
-				ArxivArchive::QuantPh => "quant-ph",
-				ArxivArchive::Stat => "stat",
-			}
-		)
+		match self {
+			ArxivArchive::AstroPh => f.write_str("astro-ph"),
+			ArxivArchive::CondMat => f.write_str("cond-mat"),
+			ArxivArchive::Cs => f.write_str("cs"),
+			ArxivArchive::Econ => f.write_str("econ"),
+			ArxivArchive::Eess => f.write_str("eess"),
+			ArxivArchive::GrQc => f.write_str("gr-qc"),
+			ArxivArchive::HepEx => f.write_str("hep-ex"),
+			ArxivArchive::HepLat => f.write_str("hep-lat"),
+			ArxivArchive::HepPh => f.write_str("hep-ph"),
+			ArxivArchive::HepTh => f.write_str("hep-th"),
+			ArxivArchive::MathPh => f.write_str("math-ph"),
+			ArxivArchive::Math => f.write_str("math"),
+			ArxivArchive::Nlin => f.write_str("nlin"),
+			ArxivArchive::NuclEx => f.write_str("nucl-ex"),
+			ArxivArchive::NuclTh => f.write_str("nucl-th"),
+			ArxivArchive::Physics => f.write_str("physics"),
+			ArxivArchive::QBio => f.write_str("q-bio"),
+			ArxivArchive::QFin => f.write_str("q-fin"),
+			ArxivArchive::QuantPh => f.write_str("quant-ph"),
+			ArxivArchive::Stat => f.write_str("stat"),
+		}
 	}
 }
 
@@ -270,26 +275,20 @@ mod tests {
 
 	#[test]
 	fn parse_category_id() {
-		let cat_id = ArxivCategoryId::from_str("cs.LG");
-		assert_eq!(
-			cat_id,
-			Ok(ArxivCategoryId::new(ArxivGroup::Cs, ArxivArchive::Cs, String::from("LG")))
-		);
+		let cat_id = ArxivCategoryId::try_from("cs.LG");
+		assert_eq!(cat_id, Ok(ArxivCategoryId::new(ArxivGroup::Cs, ArxivArchive::Cs, "LG")));
 	}
 
 	#[test]
 	fn display_category() {
-		assert_eq!(
-			ArxivCategoryId::try_new(ArxivArchive::AstroPh, "HE")
-				.unwrap()
-				.to_string(),
-			"astro-ph.HE"
-		);
+		let cat_id = ArxivCategoryId::try_new(ArxivArchive::AstroPh, "HE");
+		assert_eq!(cat_id.unwrap().to_string(), "astro-ph.HE");
 	}
 
 	#[test]
 	fn group_from_archive() {
-		assert_eq!(ArxivGroup::from(ArxivArchive::AstroPh), ArxivGroup::Physics);
+		let cat_id = ArxivGroup::from(ArxivArchive::AstroPh);
+		assert_eq!(cat_id, ArxivGroup::Physics);
 	}
 
 	#[test]
