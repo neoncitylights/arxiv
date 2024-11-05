@@ -281,17 +281,14 @@ mod tests {
 
 	#[test]
 	fn display_category() {
-		assert_eq!(
-			ArxivCategoryId::try_new(ArxivArchive::AstroPh, "HE")
-				.unwrap()
-				.to_string(),
-			"astro-ph.HE"
-		);
+		let cat_id = ArxivCategoryId::try_new(ArxivArchive::AstroPh, "HE");
+		assert_eq!(cat_id.unwrap().to_string(), "astro-ph.HE");
 	}
 
 	#[test]
 	fn group_from_archive() {
-		assert_eq!(ArxivGroup::from(ArxivArchive::AstroPh), ArxivGroup::Physics);
+		let cat_id = ArxivGroup::from(ArxivArchive::AstroPh);
+		assert_eq!(cat_id, ArxivGroup::Physics);
 	}
 
 	#[test]

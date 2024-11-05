@@ -156,7 +156,6 @@ fn parse_date(date_str: &str) -> Result<Date, time::error::Parse> {
 mod tests {
 	use super::*;
 	use crate::ArxivArchive;
-	use time::error::ParseFromDescription;
 	use time::Date;
 
 	#[test]
@@ -168,6 +167,13 @@ mod tests {
 		);
 		assert_eq!(stamp.to_string(), "arXiv:2011.00001 [cs.LG] 1 Jan 2011");
 	}
+}
+
+#[cfg(test)]
+mod tests_parse_ok {
+	use super::*;
+	use crate::ArxivArchive;
+	use time::Date;
 
 	#[test]
 	fn parse_stamp() {
@@ -197,6 +203,12 @@ mod tests {
 			))
 		)
 	}
+}
+
+#[cfg(test)]
+mod tests_parse_err {
+	use super::*;
+	use time::error::ParseFromDescription;
 
 	#[test]
 	fn parse_stamp_empty() {

@@ -378,8 +378,7 @@ pub(crate) fn parse_numbervv(s: &str) -> Option<(&str, ArticleVersion)> {
 
 #[cfg(test)]
 mod test_parse_numbervv {
-	use super::parse_numbervv;
-	use crate::ArticleVersion;
+	use super::*;
 
 	#[test]
 	fn is_fine() {
@@ -390,84 +389,80 @@ mod test_parse_numbervv {
 }
 
 #[cfg(test)]
-mod tests {
+mod tests_parse_ok {
 	use super::*;
 
 	#[test]
-	fn parse_arxiv_err_empty() {
-		assert_eq!(ArxivId::try_from(""), Err(ArxivIdError::ExpectedBeginningLiteral));
+	fn from_readme() {
+		let id = ArxivId::try_from("arXiv:0706.0001v1").unwrap();
+		assert_eq!(id.year, 2007);
+		assert_eq!(id.month, 6);
+		assert_eq!(id.number(), "0001");
+		assert_eq!(id.version(), ArticleVersion::Num(1));
 	}
 
 	#[test]
-	fn parse_arxiv_readme() {
-		match ArxivId::try_from("arXiv:0706.0001v1") {
-			Ok(id) => {
-				assert_eq!(id.year, 2007);
-				assert_eq!(id.month, 6);
-				assert_eq!(id.number(), "0001");
-				assert_eq!(id.version(), ArticleVersion::Num(1));
-			}
-			Err(e) => panic!("{}", e),
-		}
+	fn without_version() {
+		let id = ArxivId::try_from("arXiv:1501.00001");
+		assert_eq!(id, Ok(ArxivId::new_latest(2015, 1, "00001")));
 	}
 
 	#[test]
-	fn parse_arxiv_err_no_numbervv() {
-		assert_eq!(ArxivId::try_from("arXiv:1501"), Err(ArxivIdError::ExpectedNumberVv));
+	fn with_version() {
+		let id = ArxivId::try_from("arXiv:9912.12345v2");
+		assert_eq!(id, Ok(ArxivId::new(2099, 12, "12345", ArticleVersion::Num(2))))
 	}
 
 	#[test]
-	fn parse_arxiv_without_version() {
-		assert_eq!(
-			ArxivId::try_from("arXiv:1501.00001"),
-			Ok(ArxivId::new_latest(2015, 1, "00001"))
-		);
+	fn with_number_4_digits() {
+		let id1 = ArxivId::new_latest(2014, 1, "7878");
+		assert_eq!(id1.to_string(), String::from("arXiv:1401.7878"));
+
+		let id2 = ArxivId::new_latest(2014, 12, "7878");
+		assert_eq!(id2.to_string(), String::from("arXiv:1412.7878"));
 	}
 
 	#[test]
-	fn parse_arxiv_with_version() {
-		assert_eq!(
-			ArxivId::try_from("arXiv:9912.12345v2"),
-			Ok(ArxivId::new(2099, 12, "12345", ArticleVersion::Num(2)))
-		)
+	fn with_number_5_digits() {
+		let id1 = ArxivId::new_latest(2014, 1, "00008");
+		assert_eq!(id1.to_string(), String::from("arXiv:1401.00008"));
+
+		let id2 = ArxivId::new_latest(2014, 12, "00008");
+		assert_eq!(id2.to_string(), String::from("arXiv:1412.00008"));
+	}
+}
+
+#[cfg(test)]
+mod tests_parse_err {
+	use super::*;
+
+	#[test]
+	fn empty_string() {
+		let id = ArxivId::try_from("");
+		assert_eq!(id, Err(ArxivIdError::ExpectedBeginningLiteral));
 	}
 
 	#[test]
-	fn arxiv_as_string_number4digits() {
-		assert_eq!(
-			ArxivId::new_latest(2014, 1, "7878").to_string(),
-			String::from("arXiv:1401.7878")
-		);
-		assert_eq!(
-			ArxivId::new_latest(2014, 12, "7878").to_string(),
-			String::from("arXiv:1412.7878")
-		);
+	fn no_numbervv() {
+		let id = ArxivId::try_from("arXiv:1501");
+		assert_eq!(id, Err(ArxivIdError::ExpectedNumberVv));
 	}
 
 	#[test]
-	fn arxiv_as_string_number5digits() {
-		assert_eq!(
-			ArxivId::new_latest(2014, 1, "00008").to_string(),
-			String::from("arXiv:1401.00008")
-		);
-		assert_eq!(
-			ArxivId::new_latest(2014, 12, "00008").to_string(),
-			String::from("arXiv:1412.00008")
-		);
+	fn invalid_year() {
+		let maybe_id = ArxivId::try_latest(2006, 1, "00001");
+		assert_eq!(maybe_id, Err(ArxivIdError::InvalidYear));
 	}
 
 	#[test]
-	fn parse_arxiv_invalid_year() {
-		assert_eq!(ArxivId::try_latest(2006, 1, "00001"), Err(ArxivIdError::InvalidYear));
+	fn invalid_month() {
+		let maybe_id = ArxivId::try_latest(2007, u8::MAX, "00001");
+		assert_eq!(maybe_id, Err(ArxivIdError::InvalidMonth));
 	}
 
 	#[test]
-	fn parse_arxiv_invalid_month() {
-		assert_eq!(ArxivId::try_latest(2007, u8::MAX, "00001"), Err(ArxivIdError::InvalidMonth))
-	}
-
-	#[test]
-	fn parse_arxiv_invalid_id() {
-		assert_eq!(ArxivId::try_latest(2007, 11, ""), Err(ArxivIdError::InvalidId))
+	fn invalid_id() {
+		let maybe_id = ArxivId::try_latest(2007, 11, "");
+		assert_eq!(maybe_id, Err(ArxivIdError::InvalidId));
 	}
 }
