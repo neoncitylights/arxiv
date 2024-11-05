@@ -16,6 +16,7 @@
 - `ArxivStamp`: make all fields public
 
 ### Breaking changes
+- MSRV: Bumps the minimum supported Rust version from 1.63.0 to 1.70.0
 - `ArxivIdError`: now marked with `#[non_exhaustive]`
 - `ArxivIdError`: removed `ArxividError::Syntax` variant
 - `ArxivStampError`: the `InvalidDate` variant no longer contains any associated data
