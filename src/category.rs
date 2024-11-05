@@ -213,6 +213,53 @@ pub enum Archive {
 	Stat,
 }
 
+impl Archive {
+	/// Checks if the archive contains any nested subjects
+	///
+	/// ```
+	/// use arxiv::Archive;
+	///
+	/// assert!(Archive::GrQc.contains_subjects());
+	/// assert!(Archive::HepEx.contains_subjects());
+	/// assert!(Archive::HepLat.contains_subjects());
+	/// assert!(Archive::HepPh.contains_subjects());
+	/// assert!(Archive::HepTh.contains_subjects());
+	/// assert!(Archive::MathPh.contains_subjects());
+	/// assert!(Archive::NuclEx.contains_subjects());
+	/// assert!(Archive::NuclTh.contains_subjects());
+	/// assert!(Archive::QuantPh.contains_subjects());
+	/// ```
+	pub const fn contains_subjects(&self) -> bool {
+		matches!(
+			self,
+			Self::GrQc
+				| Self::HepEx
+				| Self::HepLat
+				| Self::HepPh
+				| Self::HepTh
+				| Self::MathPh
+				| Self::NuclEx
+				| Self::NuclTh
+				| Self::QuantPh
+		)
+	}
+
+	/// Converts the article identifier to a URL where the abstract page is.
+	///
+	/// ```
+	/// use arxiv::Archive;
+	/// use url::Url;
+	///
+	/// let id = Archive::AstroPh;
+	/// let url = Url::from(id);
+	/// assert_eq!(url.to_string(), "https://arxiv.org/archive/astro-ph");
+	/// ```
+	#[cfg(feature = "url")]
+	pub fn as_url(&self) -> url::Url {
+		url::Url::from(*self)
+	}
+}
+
 impl Display for Archive {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		match self {
@@ -269,6 +316,13 @@ impl FromStr for Archive {
 	}
 }
 
+#[cfg(feature = "url")]
+impl From<Archive> for url::Url {
+	fn from(archive: Archive) -> url::Url {
+		url::Url::parse(&format!("https://arxiv.org/archive/{}", archive)).unwrap()
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -295,5 +349,22 @@ mod tests {
 	fn parse_archive() {
 		let archive = Archive::from_str("astro-ph");
 		assert_eq!(archive, Ok(Archive::AstroPh));
+	}
+}
+
+#[cfg(test)]
+#[cfg(feature = "url")]
+mod tests_url_archive {
+	use super::*;
+	use url::Url;
+
+	#[test]
+	fn url_from_id() {
+		let id = Archive::AstroPh;
+		let url = Url::from(id);
+		assert_eq!(url.scheme(), "https");
+		assert_eq!(url.domain(), Some("arxiv.org"));
+		assert_eq!(url.path(), "/archive/astro-ph");
+		assert_eq!(url.to_string(), "https://arxiv.org/archive/astro-ph");
 	}
 }

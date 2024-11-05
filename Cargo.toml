@@ -14,5 +14,13 @@ keywords = ["arxiv"]
 categories = ["parsing", "text-processing"]
 include = ["src", "LICENSE-APACHE", "LICENSE-MIT"]
 
-[dependencies]
-jiff = "0.1.14"
+[features]
+default = ["url"]
+url = ["dep:url"]
+
+[dependencies.jiff]
+version = "0.1.14"
+
+[dependencies.url]
+version = "2.5.3"
+optional = true
