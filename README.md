@@ -4,20 +4,41 @@ A Rust library for parsing `arXiv` categories, identifiers and references.
 
 ## Install
 
-Run the following command in the terminal:
-
 ```shell
 cargo add arxiv
 ```
 
-Or, add this to `Cargo.toml`:
+## Usage
 
-```shell
-[dependencies]
-arxiv = "0.2"
+### Identifiers
+```rust
+use arxiv::{ArticleVersion, ArxivId};
+
+let id = ArxivId::try_from("arXiv:9912.12345v2").unwrap();
+assert_eq!(id.month(), 12);
+assert_eq!(id.year(), 2099);
+assert_eq!(id.number(), "12345");
+assert_eq!(id.version(), ArticleVersion::Num(2));
 ```
 
-## Usage
+### Categories
+```rust
+use arxiv::{ArxivArchive, ArxivCategoryId, ArxivGroup};
+
+let category = ArxivCategoryId::try_from("astro-ph.HE").unwrap();
+assert_eq!(category.group(), ArxivGroup::Physics);
+assert_eq!(category.archive(), ArxivArchive::AstroPh);
+assert_eq!(category.subject(), "HE");
+```
+
+### Stamps
+```rust
+use arxiv::{ArxivArchive, ArxivCategoryId, ArxivStamp};
+
+let stamp = ArxivStamp::try_from("arXiv:0706.0001v1 [q-bio.CB] 1 Jun 2007").unwrap();
+assert_eq!(stamp.category, ArxivCategoryId::try_new(ArxivArchive::QBio, "CB").unwrap());
+assert_eq!(stamp.submitted.year(), 2007);
+```
 
 ## License
 
