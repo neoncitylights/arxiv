@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Documentation
+- Fixed a typo in the summary of the `ArxivIdError::InvalidId` variant
+
 ### Bug fixes
 - Fix `ArxivId`'s implementation of `Display` to conditionally include the version number within the formatted string (depending on if it's the latest version or a specific version)
 - Fix `ArxivId::try_new()` to check if the given number string is all ASCII digits

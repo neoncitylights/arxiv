@@ -16,7 +16,7 @@ pub enum ArxivIdError {
 	InvalidMonth,
 	/// An invalid year outside of the inclusive [2007, 2099] interval
 	InvalidYear,
-	/// An invalid year outside of the inclusive [1, 99999] interval
+	/// An invalid identifier outside of the inclusive [1, 99999] interval
 	InvalidId,
 }
 
