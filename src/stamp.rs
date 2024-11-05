@@ -40,9 +40,9 @@ impl Display for ArxivStampError {
 /// A stamp that is added onto the side of PDF version of arXiv articles
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ArxivStamp<'a> {
-	id: ArxivId<'a>,
-	category: ArxivCategoryId<'a>,
-	submitted: Date,
+	pub id: ArxivId<'a>,
+	pub category: ArxivCategoryId<'a>,
+	pub submitted: Date,
 }
 
 impl<'a> ArxivStamp<'a> {
@@ -66,27 +66,6 @@ impl<'a> ArxivStamp<'a> {
 			category,
 			submitted,
 		}
-	}
-
-	/// The unique arXiv identifier of the stamp
-	#[must_use]
-	#[inline]
-	pub const fn id(&self) -> ArxivId<'a> {
-		self.id
-	}
-
-	/// The category of the stamp
-	#[must_use]
-	#[inline]
-	pub const fn category(&self) -> ArxivCategoryId<'a> {
-		self.category
-	}
-
-	/// The submitted date of the given publication for the stamp
-	#[must_use]
-	#[inline]
-	pub const fn submitted(&self) -> Date {
-		self.submitted
 	}
 }
 
