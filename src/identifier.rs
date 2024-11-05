@@ -387,7 +387,7 @@ pub(crate) fn parse_numbervv(s: &str) -> Option<(&str, ArticleVersion)> {
 
 #[cfg(test)]
 mod test_display {
-    use super::ArxivId;
+	use super::ArxivId;
 
 	#[test]
 	fn with_version() {
