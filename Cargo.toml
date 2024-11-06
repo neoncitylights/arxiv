@@ -16,6 +16,9 @@ include = ["src", "LICENSE-APACHE", "LICENSE-MIT"]
 
 [features]
 default = ["url"]
+# Allows for turning arXiv types into URLs, such as linking to
+# the abstract URL of an article published on arXiv bsaed on its
+# identifier.
 url = ["dep:url"]
 
 [dependencies.jiff]
