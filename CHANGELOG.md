@@ -20,6 +20,7 @@ This version marks the first stable release of the library. The API has been sig
 - `ArticleId`: make `number` and `version` fields public
 - `ArticleId`: add `new()` and `new_latest()` methods (replacing `new_unchecked()` and `new_unchecked_latest()` respectively)
 - `ArticleId`: add `as_unique_ident()` method, which returns a unique identifier for the arXiv article in the form of "YYMM.NNNNN"
+- `CategoryId`: add `parse_bracketed()` method
 - `Stamp`: make all fields public
 - Introduce a crate feature `url`. This optionally installs the "url" dependency, and allows creating a `url::Url` instance from an `Archive` or `ArticleId` via:
   - `impl<'a> From<Archive> for url::Url`, `Archive::as_url()`
@@ -30,7 +31,7 @@ This version marks the first stable release of the library. The API has been sig
 - Migrate date handling from the time crate to the jiff crate
 - Rename `ArxivArchive` to `Archive`
 - Rename `ArxivId` to `ArticleId`
-- Rename `ArticleIdError` to `ArticleIdError`
+- Rename `ArxivIdError` to `ArticleIdError`
 - Rename `ArxivIdResult` to `ArticleIdResult`
 - Rename `ArxivIdScheme` to `ArticleIdScheme`
 - Rename `ArxivCategoryId` to `Category`

@@ -1,3 +1,5 @@
+#![cfg_attr(docsrs, feature(doc_cfg))]
+
 use crate::subject_tables::*;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
@@ -65,6 +67,17 @@ impl<'a> CategoryId<'a> {
 		}
 	}
 
+	/// Parse a bracketed string like `[astro-ph.CE]`
+	///
+	/// # Examples
+	/// ```
+	/// use arxiv::{Archive, CategoryId, Group};
+	///
+	/// let category = CategoryId::try_from("astro-ph.EP").unwrap();
+	/// assert_eq!(category.group(), Group::Physics);
+	/// assert_eq!(category.archive(), Archive::AstroPh);
+	/// assert_eq!(category.subject(), "EP");
+	/// ```
 	pub fn parse_bracketed(s: &'a str) -> Option<Self> {
 		match s.starts_with('[') && s.ends_with(']') {
 			true => Self::try_from(&s[1..s.len() - 1]).ok(),
@@ -255,6 +268,7 @@ impl Archive {
 	/// assert_eq!(url.to_string(), "https://arxiv.org/archive/astro-ph");
 	/// ```
 	#[cfg(feature = "url")]
+	#[cfg_attr(docsrs, doc(cfg(feature = "url")))]
 	pub fn as_url(&self) -> url::Url {
 		url::Url::from(*self)
 	}
@@ -317,6 +331,7 @@ impl FromStr for Archive {
 }
 
 #[cfg(feature = "url")]
+#[cfg_attr(docsrs, doc(cfg(feature = "url")))]
 impl From<Archive> for url::Url {
 	fn from(archive: Archive) -> url::Url {
 		url::Url::parse(&format!("https://arxiv.org/archive/{}", archive)).unwrap()
