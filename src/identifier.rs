@@ -1,3 +1,5 @@
+#![cfg_attr(docsrs, feature(doc_cfg))]
+
 use std::error::Error;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
@@ -311,6 +313,7 @@ impl<'a> ArticleId<'a> {
 	/// assert_eq!(url.to_string(), "https://arxiv.org/abs/2010.14462v2");
 	/// ```
 	#[cfg(feature = "url")]
+	#[cfg_attr(docsrs, doc(cfg(feature = "url")))]
 	pub fn as_url(&self) -> url::Url {
 		url::Url::from(*self)
 	}
@@ -351,6 +354,7 @@ impl<'a> TryFrom<&'a str> for ArticleId<'a> {
 }
 
 #[cfg(feature = "url")]
+#[cfg_attr(docsrs, doc(cfg(feature = "url")))]
 impl<'a> From<ArticleId<'a>> for url::Url {
 	fn from(id: ArticleId<'a>) -> url::Url {
 		url::Url::parse(&format!("https://arxiv.org/abs/{}{}", id.as_unique_ident(), id.version,))

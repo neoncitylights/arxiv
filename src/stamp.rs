@@ -49,7 +49,7 @@ pub struct Stamp<'a> {
 
 impl<'a> Stamp<'a> {
 	/// Manually create a new [`Stamp`] from the given components.
-
+	///
 	/// # Examples
 	/// ```
 	/// use arxiv::{Archive, ArticleId, CategoryId, Stamp};
