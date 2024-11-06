@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.0 (2024-11-06)
 This version marks the first stable release of the library. The API has been significantly reworked since the initial release to be more idiomatic. The dependency for handling dates was switched from the `time` crate to the `jiff` crate, and the MSRV has been bumped to 1.70.0 to align with the `jiff` crate.
 
 ### Documentation
