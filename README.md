@@ -54,6 +54,10 @@ assert_eq!(stamp.category, CategoryId::try_new(Archive::QBio, "CB").unwrap());
 assert_eq!(stamp.submitted.year(), 2007);
 ```
 
+### Feature flags
+The crate has the following feature flags:
+- `url` (default): Enables converting types into URLs where possible, such as converting an article identifier into a URL that leads to its abstract page.
+
 ## License
 
 Licensed under either of
