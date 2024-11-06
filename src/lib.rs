@@ -1,3 +1,4 @@
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![deny(missing_copy_implementations, missing_debug_implementations)]
 
 //! A Rust library for parsing `arXiv` categories, identifiers and references.

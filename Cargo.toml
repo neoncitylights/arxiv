@@ -1,6 +1,6 @@
 [package]
 name = "arxiv"
-version = "1.0.0"
+version = "1.0.1"
 authors = [
 	"Samantha Nguyen, <contact@samanthanguyen.me>",
 ]
@@ -13,6 +13,10 @@ rust-version = "1.70.0"
 keywords = ["arxiv"]
 categories = ["parsing", "text-processing"]
 include = ["src", "LICENSE-APACHE", "LICENSE-MIT"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
 
 [features]
 default = ["url"]

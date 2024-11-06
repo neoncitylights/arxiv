@@ -1,5 +1,3 @@
-// TODO: Auto-generate the tables below from "https://arxiv.org/category_taxonomy" in a build.rs file
-
 pub(crate) const COMPSCI_TABLE: &[&str] = &[
 	"AI", "AR", "CC", "CE", "CG", "CL", "CR", "CV", "CY", "DB", "DC", "DL", "DM", "DS", "ET", "FL",
 	"GL", "GR", "GT", "HC", "IR", "IT", "LG", "LO", "MA", "MM", "MS", "NA", "NI", "OH", "OS", "PF",
