@@ -67,6 +67,17 @@ impl<'a> CategoryId<'a> {
 		}
 	}
 
+	/// Parse a bracketed string like `[astro-ph.CE]`
+	///
+	/// # Examples
+	/// ```
+	/// use arxiv::{Archive, CategoryId, Group};
+	///
+	/// let category = CategoryId::try_from("astro-ph.EP").unwrap();
+	/// assert_eq!(category.group(), Group::Physics);
+	/// assert_eq!(category.archive(), Archive::AstroPh);
+	/// assert_eq!(category.subject(), "EP");
+	/// ```
 	pub fn parse_bracketed(s: &'a str) -> Option<Self> {
 		match s.starts_with('[') && s.ends_with(']') {
 			true => Self::try_from(&s[1..s.len() - 1]).ok(),
