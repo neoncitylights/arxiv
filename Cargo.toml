@@ -1,6 +1,6 @@
 [package]
 name = "arxiv"
-version = "1.0.0"
+version = "1.0.1"
 authors = [
 	"Samantha Nguyen, <contact@samanthanguyen.me>",
 ]
