@@ -23,7 +23,7 @@ default = ["url"]
 url = ["dep:url"]
 
 [dependencies.jiff]
-version = "0.1.14"
+version = "0.1.15"
 
 [dependencies.url]
 version = "2.5.3"
