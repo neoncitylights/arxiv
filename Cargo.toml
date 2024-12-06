@@ -26,5 +26,5 @@ url = ["dep:url"]
 version = "0.1.15"
 
 [dependencies.url]
-version = "2.5.3"
+version = "2.5.4"
 optional = true
