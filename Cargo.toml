@@ -1,6 +1,6 @@
 [package]
 name = "arxiv"
-version = "1.0.1"
+version = "1.0.2"
 authors = ["Samantha Nguyen, <contact@samanthanguyen.me>"]
 description = "Rust library to parse arXiv identifiers and references"
 repository = "https://github.com/neoncitylights/arxiv"
