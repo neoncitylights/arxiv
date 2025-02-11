@@ -1,9 +1,7 @@
 [package]
 name = "arxiv"
 version = "1.0.1"
-authors = [
-	"Samantha Nguyen, <contact@samanthanguyen.me>",
-]
+authors = ["Samantha Nguyen, <contact@samanthanguyen.me>"]
 description = "Rust library to parse arXiv identifiers and references"
 repository = "https://github.com/neoncitylights/arxiv"
 readme = "README.md"
@@ -23,7 +21,7 @@ default = ["url"]
 url = ["dep:url"]
 
 [dependencies.jiff]
-version = "0.1.28"
+version = "0.2"
 
 [dependencies.url]
 version = "2.5.4"

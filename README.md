@@ -24,7 +24,7 @@ cargo add arxiv
 
 ## Usage
 
-## Identifiers
+### Identifiers
 ```rust
 use arxiv::{ArticleId, ArticleVersion};
 
@@ -35,7 +35,7 @@ assert_eq!(id.number(), "12345");
 assert_eq!(id.version(), ArticleVersion::Num(2));
 ```
 
-## Categories
+### Categories
 ```rust
 use arxiv::{Archive, CategoryId, Group};
 
@@ -45,7 +45,7 @@ assert_eq!(category.archive(), Archive::AstroPh);
 assert_eq!(category.subject(), "HE");
 ```
 
-## Stamps
+### Stamps
 ```rust
 use arxiv::{Archive, CategoryId, Stamp};
 
@@ -54,7 +54,7 @@ assert_eq!(stamp.category, CategoryId::try_new(Archive::QBio, "CB").unwrap());
 assert_eq!(stamp.submitted.year(), 2007);
 ```
 
-### Feature flags
+## Feature flags
 The crate has the following feature flags:
 - `url` (default): Enables converting types into URLs where possible, such as converting an article identifier into a URL that leads to its abstract page.
 
