@@ -71,7 +71,7 @@ impl<'a> Stamp<'a> {
 	}
 }
 
-impl<'a> Display for Stamp<'a> {
+impl Display for Stamp<'_> {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		write!(
 			f,

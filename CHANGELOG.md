@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 (2025-02-11)
+- Fixes minor cargo clippy issues
+- Fixes minor markdown issues in README.md
+- Bumps dependency `jiff` from v0.1.28 to v0.2
+
 ## 1.0.1 (2024-11-06)
 Released a hotfix to enable documentation to be generated on docs.rs.
 

@@ -108,7 +108,7 @@ impl<'a> CategoryId<'a> {
 	}
 }
 
-impl<'a> Display for CategoryId<'a> {
+impl Display for CategoryId<'_> {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		write!(f, "{}.{}", self.archive, self.subject)
 	}

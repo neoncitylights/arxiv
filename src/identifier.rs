@@ -149,7 +149,7 @@ impl<'a> ArticleId<'a> {
 		month: i8,
 		number: &'a str,
 		version: ArticleVersion,
-	) -> ArticleIdResult {
+	) -> ArticleIdResult<'a> {
 		if !(Self::MIN_YEAR..=Self::MAX_YEAR).contains(&year) {
 			return Err(ArticleIdError::InvalidYear);
 		}
@@ -179,7 +179,7 @@ impl<'a> ArticleId<'a> {
 	/// assert!(id.is_ok());
 	/// ```
 	#[inline]
-	pub fn try_latest(year: i16, month: i8, number: &'a str) -> ArticleIdResult {
+	pub fn try_latest(year: i16, month: i8, number: &'a str) -> ArticleIdResult<'a> {
 		Self::try_new(year, month, number, ArticleVersion::Latest)
 	}
 
@@ -257,7 +257,7 @@ impl<'a> ArticleId<'a> {
 	///
 	/// let mut id = ArticleId::try_from("arXiv:2001.00001").unwrap();
 	/// assert_eq!(id.version(), ArticleVersion::Latest);
-
+	///
 	/// id.set_version(1);
 	/// assert_eq!(id.version(), ArticleVersion::Num(1));
 	/// ```
@@ -319,7 +319,7 @@ impl<'a> ArticleId<'a> {
 	}
 }
 
-impl<'a> Display for ArticleId<'a> {
+impl Display for ArticleId<'_> {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		write!(f, "arXiv:{}{}", self.as_unique_ident(), self.version)
 	}
