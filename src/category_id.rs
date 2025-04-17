@@ -5,10 +5,13 @@ use std::error::Error;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
 
+/// [`Result`] type alias holding either a [`CategoryId`] or [`CategoryIdError`]
+pub type CategoryIdResult<'a> = Result<CategoryId<'a>, CategoryIdError<'a>>;
+
 /// An error that can occur when parsing and validating arXiv category identifiers
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CategoryIdError<'a> {
-	NotEnoughComponents,
+	ExpectedSubject,
 	InvalidArchive(&'a str),
 	InvalidArchiveSubject(Archive, &'a str),
 }
@@ -18,7 +21,7 @@ impl Error for CategoryIdError<'_> {}
 impl Display for CategoryIdError<'_> {
 	fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
 		match self {
-			Self::NotEnoughComponents => f.write_str("Expected "),
+			Self::ExpectedSubject => f.write_str("Expected to find a subject identifier"),
 			Self::InvalidArchive(s) => write!(f, "Invalid arXiv archive identifier: {}", s),
 			Self::InvalidArchiveSubject(archive, subject_str) => write!(
 				f,
@@ -163,7 +166,7 @@ impl<'a> TryFrom<&'a str> for CategoryId<'a> {
 
 		let parts: Vec<&str> = s.split(Self::TOKEN_DELIM).collect();
 		if parts.len() != 2 {
-			return Err(NotEnoughComponents);
+			return Err(ExpectedSubject);
 		}
 
 		let (archive_str, subject) = (parts[0], parts[1]);
@@ -217,12 +220,37 @@ mod serde {
 
 #[cfg(test)]
 mod tests {
-	use crate::{Archive, CategoryId, Group};
+	use crate::{Archive, CategoryId, CategoryIdError, Group};
+	use CategoryIdError::*;
 
 	#[test]
-	fn parse_category_id() {
+	fn parse_ok() {
 		let cat_id = CategoryId::try_from("cs.LG");
 		assert_eq!(cat_id, Ok(CategoryId::new(Group::Cs, Archive::Cs, "LG")));
+	}
+
+	#[test]
+	fn parse_err_expected_subject() {
+		let cat_id = CategoryId::try_from("cs");
+		assert_eq!(cat_id, Err(ExpectedSubject));
+	}
+
+	#[test]
+	fn parse_err_expected_subject_empty() {
+		let cat_id = CategoryId::try_from("cs.");
+		assert_eq!(cat_id, Err(ExpectedSubject));
+	}
+
+	#[test]
+	fn parse_err_invalid_archive() {
+		let cat_id = CategoryId::try_from("ecot.LG");
+		assert_eq!(cat_id, Err(InvalidArchive("ecot")));
+	}
+
+	#[test]
+	fn parse_err_invalid_subject() {
+		let cat_id = CategoryId::try_from("econ.foo");
+		assert_eq!(cat_id, Err(InvalidArchiveSubject(Archive::Econ, "foo")));
 	}
 
 	#[test]
