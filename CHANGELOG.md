@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0 (Unreleased)
+- Added a `serde` feature for serializing and deserializing `ArticleId`.
+
 ## 1.0.2 (2025-02-11)
 - Fixes minor cargo clippy issues
 - Fixes minor markdown issues in README.md

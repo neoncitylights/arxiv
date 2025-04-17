@@ -353,6 +353,48 @@ impl<'a> TryFrom<&'a str> for ArticleId<'a> {
 	}
 }
 
+#[cfg(feature = "serde")]
+#[cfg_attr(docsrs, doc(cfg(feature = "serde")))]
+mod serde {
+	use crate::ArticleId;
+	use serde::de::{DeserializeSeed, Deserializer, Error as DeError, Visitor};
+	use std::fmt::{Formatter, Result as FmtResult};
+	use std::marker::PhantomData;
+
+	impl<'de: 'a, 'a> DeserializeSeed<'de> for ArticleId<'a> {
+		type Value = ArticleId<'a>;
+
+		fn deserialize<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
+		where
+			D: Deserializer<'de>,
+		{
+			deserializer.deserialize_str(ArticleIdVisitor(PhantomData))
+		}
+	}
+
+	struct ArticleIdVisitor<'a>(PhantomData<&'a ()>);
+
+	impl<'de: 'a, 'a> Visitor<'de> for ArticleIdVisitor<'a> {
+		type Value = ArticleId<'a>;
+
+		fn expecting(&self, formatter: &mut Formatter) -> FmtResult {
+			formatter.write_str("a string to parse into ArticleId")
+		}
+
+		fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
+		where
+			E: DeError,
+		{
+			ArticleId::try_from(v).map_err(|e| {
+				E::custom(format!(
+					"An error occurred while parsing an ArXiv article identifier: {}",
+					e
+				))
+			})
+		}
+	}
+}
+
 #[cfg(feature = "url")]
 #[cfg_attr(docsrs, doc(cfg(feature = "url")))]
 impl<'a> From<ArticleId<'a>> for url::Url {
@@ -467,7 +509,7 @@ mod tests_url {
 
 	#[test]
 	fn url_from_id() {
-		let id = ArticleId::try_new(2007, 01, "00001", ArticleVersion::Latest).unwrap();
+		let id = ArticleId::try_new(2007, 1, "00001", ArticleVersion::Latest).unwrap();
 		let url = Url::from(id);
 
 		assert_eq!(url.scheme(), "https");
