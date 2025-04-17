@@ -426,7 +426,7 @@ pub(crate) fn parse_numbervv(s: &str) -> Option<(&str, ArticleVersion)> {
 
 #[cfg(test)]
 mod test_display {
-	use super::ArticleId;
+	use crate::ArticleId;
 
 	#[test]
 	fn with_version() {
@@ -443,7 +443,7 @@ mod test_display {
 
 #[cfg(test)]
 mod test_parse_numbervv {
-	use super::*;
+	use crate::{parse_numbervv, ArticleVersion};
 
 	#[test]
 	fn is_fine() {
@@ -455,7 +455,7 @@ mod test_parse_numbervv {
 
 #[cfg(test)]
 mod tests_parse_ok {
-	use super::*;
+	use crate::{ArticleId, ArticleVersion};
 
 	#[test]
 	fn from_readme() {
@@ -499,7 +499,7 @@ mod tests_parse_ok {
 
 #[cfg(test)]
 mod tests_parse_err {
-	use super::*;
+	use crate::{ArticleId, ArticleIdError};
 
 	#[test]
 	fn empty_string() {
@@ -535,7 +535,7 @@ mod tests_parse_err {
 #[cfg(test)]
 #[cfg(feature = "url")]
 mod tests_url {
-	use super::*;
+	use crate::{ArticleId, ArticleVersion};
 	use url::Url;
 
 	#[test]

@@ -121,8 +121,7 @@ fn parse_date(date_str: &str) -> Result<Date, JiffError> {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-	use crate::Archive;
+	use crate::{Archive, ArticleId, CategoryId, Stamp};
 	use jiff::civil::date;
 
 	#[test]
@@ -138,8 +137,7 @@ mod tests {
 
 #[cfg(test)]
 mod tests_parse_ok {
-	use super::*;
-	use crate::Archive;
+	use crate::{Archive, ArticleId, CategoryId, Stamp};
 	use jiff::civil::date;
 
 	#[test]
@@ -174,7 +172,7 @@ mod tests_parse_ok {
 
 #[cfg(test)]
 mod tests_parse_err {
-	use super::*;
+	use crate::{Stamp, StampError};
 
 	#[test]
 	fn parse_stamp_empty() {

@@ -1,6 +1,5 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
-use crate::subject_tables::*;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
 
@@ -14,6 +13,23 @@ pub struct CategoryId<'a> {
 
 impl<'a> CategoryId<'a> {
 	pub(crate) const TOKEN_DELIM: char = '.';
+	pub(crate) const COMPSCI_TABLE: &'static [&'static str] = &[
+		"AI", "AR", "CC", "CE", "CG", "CL", "CR", "CV", "CY", "DB", "DC", "DL", "DM", "DS", "ET",
+		"FL", "GL", "GR", "GT", "HC", "IR", "IT", "LG", "LO", "MA", "MM", "MS", "NA", "NI", "OH",
+		"OS", "PF", "PL", "RO", "SC", "SD", "SE", "SI", "SY",
+	];
+
+	pub(crate) const MATH_TABLE: &'static [&'static str] = &[
+		"AC", "AG", "AP", "AT", "CA", "CO", "CT", "CV", "DG", "DS", "FA", "GM", "GN", "GR", "GT",
+		"HO", "IT", "KT", "LO", "MG", "MP", "NA", "NT", "OA", "OC", "PR", "QA", "RA", "RT", "SG",
+		"SP", "ST",
+	];
+
+	pub(crate) const PHYSICS_TABLE: &'static [&'static str] = &[
+		"acc-ph", "ao-ph", "app-ph", "atm-clus", "atom-ph", "bio-ph", "chem-ph", "class-ph",
+		"comp-ph", "data-an", "ed-pn", "flu-dyn", "gen-ph", "geo-ph", "hist-ph", "ins-det",
+		"med-ph", "optics", "plasm-ph", "pop-ph", "soc-ph", "space-ph",
+	];
 
 	pub(super) const fn new(group: Group, archive: Archive, subject: &'a str) -> Self {
 		Self {
@@ -36,7 +52,7 @@ impl<'a> CategoryId<'a> {
 				| "quant-gas"
 				| "soft" | "stat-mech"
 				| "str-el" | "supr-con"),
-			Archive::Cs => COMPSCI_TABLE.binary_search(&subject).is_ok(),
+			Archive::Cs => Self::COMPSCI_TABLE.binary_search(&subject).is_ok(),
 			Archive::Econ => matches!(subject, "EM" | "GN" | "TH"),
 			Archive::Eess => matches!(subject, "AS" | "IV" | "SP" | "SY"),
 			Archive::GrQc => subject.is_empty(),
@@ -45,11 +61,11 @@ impl<'a> CategoryId<'a> {
 			Archive::HepPh => subject.is_empty(),
 			Archive::HepTh => subject.is_empty(),
 			Archive::MathPh => subject.is_empty(),
-			Archive::Math => MATH_TABLE.binary_search(&subject).is_ok(),
+			Archive::Math => Self::MATH_TABLE.binary_search(&subject).is_ok(),
 			Archive::Nlin => matches!(subject, "AO" | "CD" | "CG" | "PS" | "SI"),
 			Archive::NuclEx => subject.is_empty(),
 			Archive::NuclTh => subject.is_empty(),
-			Archive::Physics => PHYSICS_TABLE.binary_search(&subject).is_ok(),
+			Archive::Physics => Self::PHYSICS_TABLE.binary_search(&subject).is_ok(),
 			Archive::QBio => matches!(
 				subject,
 				"BM" | "CB" | "GN" | "MN" | "NC" | "OT" | "PE" | "QM" | "SC" | "TO"
@@ -340,7 +356,8 @@ impl From<Archive> for url::Url {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use crate::{Archive, CategoryId, Group};
+	use std::str::FromStr;
 
 	#[test]
 	fn parse_category_id() {
@@ -370,7 +387,7 @@ mod tests {
 #[cfg(test)]
 #[cfg(feature = "url")]
 mod tests_url_archive {
-	use super::*;
+	use crate::Archive;
 	use url::Url;
 
 	#[test]

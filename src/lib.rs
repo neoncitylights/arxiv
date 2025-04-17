@@ -41,7 +41,6 @@
 mod category;
 mod identifier;
 mod stamp;
-mod subject_tables;
 pub use crate::category::*;
 pub use crate::identifier::*;
 pub use crate::stamp::*;
