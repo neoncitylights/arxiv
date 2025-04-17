@@ -1,8 +1,36 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
 use crate::{Archive, Group};
+use std::error::Error;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
+
+/// [`Result`] type alias holding either a [`CategoryId`] or [`CategoryIdError`]
+pub type CategoryIdResult<'a> = Result<CategoryId<'a>, CategoryIdError<'a>>;
+
+/// An error that can occur when parsing and validating arXiv category identifiers
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CategoryIdError<'a> {
+	ExpectedSubject,
+	InvalidArchive(&'a str),
+	InvalidArchiveSubject(Archive, &'a str),
+}
+
+impl Error for CategoryIdError<'_> {}
+
+impl Display for CategoryIdError<'_> {
+	fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+		match self {
+			Self::ExpectedSubject => f.write_str("Expected to find a subject identifier"),
+			Self::InvalidArchive(s) => write!(f, "Invalid arXiv archive identifier: {}", s),
+			Self::InvalidArchiveSubject(archive, subject_str) => write!(
+				f,
+				"The arXiv subject \"{}\" does not fall under the archive \"{}\"",
+				archive, subject_str
+			),
+		}
+	}
+}
 
 /// An identifier for arXiv categories, which are composed of an archive and category
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -132,28 +160,58 @@ impl Display for CategoryId<'_> {
 }
 
 impl<'a> TryFrom<&'a str> for CategoryId<'a> {
-	type Error = ();
+	type Error = CategoryIdError<'a>;
 	fn try_from(s: &'a str) -> Result<Self, Self::Error> {
+		use CategoryIdError::*;
+
 		let parts: Vec<&str> = s.split(Self::TOKEN_DELIM).collect();
 		if parts.len() != 2 {
-			return Err(());
+			return Err(ExpectedSubject);
 		}
 
-		let archive = Archive::from_str(parts[0])?;
-		let subject = parts[1];
+		let (archive_str, subject) = (parts[0], parts[1]);
+		if subject.is_empty() {
+			return Err(ExpectedSubject);
+		}
 
-		Self::try_new(archive, subject).ok_or(())
+		let archive = Archive::from_str(archive_str).map_err(|_| InvalidArchive(archive_str))?;
+		Self::try_new(archive, subject).ok_or(InvalidArchiveSubject(archive, subject))
 	}
 }
 
 #[cfg(test)]
 mod tests {
-	use crate::{Archive, CategoryId, Group};
+	use crate::{Archive, CategoryId, CategoryIdError, Group};
+	use CategoryIdError::*;
 
 	#[test]
-	fn parse_category_id() {
+	fn parse_ok() {
 		let cat_id = CategoryId::try_from("cs.LG");
 		assert_eq!(cat_id, Ok(CategoryId::new(Group::Cs, Archive::Cs, "LG")));
+	}
+
+	#[test]
+	fn parse_err_expected_subject() {
+		let cat_id = CategoryId::try_from("cs");
+		assert_eq!(cat_id, Err(ExpectedSubject));
+	}
+
+	#[test]
+	fn parse_err_expected_subject_empty() {
+		let cat_id = CategoryId::try_from("cs.");
+		assert_eq!(cat_id, Err(ExpectedSubject));
+	}
+
+	#[test]
+	fn parse_err_invalid_archive() {
+		let cat_id = CategoryId::try_from("ecot.LG");
+		assert_eq!(cat_id, Err(InvalidArchive("ecot")));
+	}
+
+	#[test]
+	fn parse_err_invalid_subject() {
+		let cat_id = CategoryId::try_from("econ.foo");
+		assert_eq!(cat_id, Err(InvalidArchiveSubject(Archive::Econ, "foo")));
 	}
 
 	#[test]
