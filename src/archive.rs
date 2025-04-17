@@ -51,20 +51,12 @@ pub enum Archive {
 }
 
 impl Archive {
-	/// Checks if the archive contains any nested subjects
+	/// Checks if the archive contains any nested subjects.
 	///
 	/// ```
 	/// use arxiv::Archive;
 	///
 	/// assert!(Archive::GrQc.contains_subjects());
-	/// assert!(Archive::HepEx.contains_subjects());
-	/// assert!(Archive::HepLat.contains_subjects());
-	/// assert!(Archive::HepPh.contains_subjects());
-	/// assert!(Archive::HepTh.contains_subjects());
-	/// assert!(Archive::MathPh.contains_subjects());
-	/// assert!(Archive::NuclEx.contains_subjects());
-	/// assert!(Archive::NuclTh.contains_subjects());
-	/// assert!(Archive::QuantPh.contains_subjects());
 	/// ```
 	pub const fn contains_subjects(&self) -> bool {
 		matches!(
@@ -166,6 +158,18 @@ impl From<Archive> for url::Url {
 mod tests {
 	use crate::Archive;
 	use std::str::FromStr;
+
+	#[test]
+	fn test_contains_subject() {
+		assert!(Archive::HepEx.contains_subjects());
+		assert!(Archive::HepLat.contains_subjects());
+		assert!(Archive::HepPh.contains_subjects());
+		assert!(Archive::HepTh.contains_subjects());
+		assert!(Archive::MathPh.contains_subjects());
+		assert!(Archive::NuclEx.contains_subjects());
+		assert!(Archive::NuclTh.contains_subjects());
+		assert!(Archive::QuantPh.contains_subjects());
+	}
 
 	#[test]
 	fn parse_archive() {

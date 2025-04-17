@@ -40,11 +40,13 @@
 
 mod archive;
 mod article_id;
+mod article_version;
 mod category_id;
 mod group;
 mod stamp;
 pub use crate::archive::*;
 pub use crate::article_id::*;
+pub use crate::article_version::*;
 pub use crate::category_id::*;
 pub use crate::group::*;
 pub use crate::stamp::*;
