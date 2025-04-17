@@ -1,5 +1,6 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
+use crate::{parse_numbervv, ArticleVersion};
 use std::error::Error;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
@@ -70,7 +71,6 @@ impl<'a> ArticleId<'a> {
 	pub(crate) const MAX_MONTH: i8 = 12i8;
 	pub(crate) const TOKEN_COLON: char = ':';
 	pub(crate) const TOKEN_DOT: char = '.';
-	pub(crate) const TOKEN_VERSION: char = 'v';
 
 	/// This allows manually creating an [`ArticleId`] from the given components without any
 	/// validation. Only do this if you have already verified that the components are valid.
@@ -139,7 +139,7 @@ impl<'a> ArticleId<'a> {
 	///
 	/// # Examples
 	/// ```
-	/// use arxiv::{ArticleId, ArticleIdError, ArticleVersion};
+	/// use arxiv::{ArticleId, ArticleVersion};
 	///
 	/// let id = ArticleId::try_new(2011, 1, "00001", ArticleVersion::Num(1));
 	/// assert!(id.is_ok());
@@ -173,7 +173,7 @@ impl<'a> ArticleId<'a> {
 	///
 	/// # Examples
 	/// ```
-	/// use arxiv::{ArticleId, ArticleIdError};
+	/// use arxiv::ArticleId;
 	///
 	/// let id = ArticleId::try_latest(2011, 1, "00001");
 	/// assert!(id.is_ok());
@@ -240,7 +240,7 @@ impl<'a> ArticleId<'a> {
 	/// ```
 	/// use arxiv::{ArticleId, ArticleVersion};
 	///
-	///  let id = ArticleId::try_from("arXiv:2304.11188v1").unwrap();
+	/// let id = ArticleId::try_from("arXiv:2304.11188v1").unwrap();
 	/// assert_eq!(id.version(), ArticleVersion::Num(1));
 	/// ```
 	#[must_use]
@@ -295,10 +295,9 @@ impl<'a> ArticleId<'a> {
 		let mut year_str = self.year.to_string();
 		let (_, half_year) = year_str.as_mut_str().split_at(2);
 
-		if self.number.len() == 4usize {
-			format!("{:02}{:02}.{:04}", half_year, self.month, self.number)
-		} else {
-			format!("{:02}{:02}.{:05}", half_year, self.month, self.number)
+		match self.number.len() == 4usize {
+			true => format!("{:02}{:02}.{:04}", half_year, self.month, self.number),
+			false => format!("{:02}{:02}.{:05}", half_year, self.month, self.number),
 		}
 	}
 
@@ -349,6 +348,7 @@ impl<'a> TryFrom<&'a str> for ArticleId<'a> {
 		let year = date[0..2].parse::<i16>().map_err(|_| InvalidYear)?;
 		let month = date[2..4].parse::<i8>().map_err(|_| InvalidMonth)?;
 		let (number, version) = parse_numbervv(numbervv).ok_or(ExpectedNumberVv)?;
+
 		ArticleId::try_new(year + 2000i16, month, number, version)
 	}
 }
@@ -357,76 +357,14 @@ impl<'a> TryFrom<&'a str> for ArticleId<'a> {
 #[cfg_attr(docsrs, doc(cfg(feature = "url")))]
 impl<'a> From<ArticleId<'a>> for url::Url {
 	fn from(id: ArticleId<'a>) -> url::Url {
-		url::Url::parse(&format!("https://arxiv.org/abs/{}{}", id.as_unique_ident(), id.version,))
-			.unwrap()
+		let f = &format!("https://arxiv.org/abs/{}{}", id.as_unique_ident(), id.version);
+		url::Url::parse(f).unwrap()
 	}
-}
-
-/// The version of an article as declared in an arXiv identifier
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum ArticleVersion {
-	#[default]
-	Latest,
-	Num(u8),
-}
-
-impl From<u8> for ArticleVersion {
-	fn from(val: u8) -> Self {
-		Self::Num(val)
-	}
-}
-
-impl Display for ArticleVersion {
-	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-		match self {
-			Self::Latest => f.write_str(""),
-			Self::Num(v) => write!(f, "v{}", v),
-		}
-	}
-}
-
-/// Parses a string in the format of "number{vV}",
-/// where:
-/// - `number` is a unique integer up 4 to 5 digits
-/// - `{vV}` (optional): a `v` literal followed by 1 or more digits
-pub(crate) fn parse_numbervv(s: &str) -> Option<(&str, ArticleVersion)> {
-	if s.len() < 4 {
-		return None;
-	}
-
-	let first4 = &s[..4];
-	let are_digits = first4.chars().all(|c| c.is_ascii_digit());
-	if !are_digits {
-		return None;
-	}
-
-	let mut peek = s[4..].chars().peekable();
-	let number = match peek.next_if(|c| c.is_ascii_digit()) {
-		Some(_) => &s[..5],
-		None => &s[..4],
-	};
-
-	let mut version = ArticleVersion::Latest;
-	if s.len() > number.len() {
-		let after_number = &mut s[number.len()..].chars().peekable();
-		if after_number
-			.next_if(|c| *c == ArticleId::TOKEN_VERSION)
-			.is_some()
-		{
-			let consume = after_number
-				.take_while(|c| c.is_ascii_digit())
-				.collect::<String>();
-			let version_u8 = consume.parse::<u8>().ok()?;
-			version = ArticleVersion::Num(version_u8);
-		}
-	}
-
-	Some((number, version))
 }
 
 #[cfg(test)]
 mod test_display {
-	use super::ArticleId;
+	use crate::ArticleId;
 
 	#[test]
 	fn with_version() {
@@ -442,20 +380,8 @@ mod test_display {
 }
 
 #[cfg(test)]
-mod test_parse_numbervv {
-	use super::*;
-
-	#[test]
-	fn is_fine() {
-		let parsed = parse_numbervv("0001v1").unwrap();
-		assert_eq!(parsed.0, "0001");
-		assert_eq!(parsed.1, ArticleVersion::Num(1));
-	}
-}
-
-#[cfg(test)]
 mod tests_parse_ok {
-	use super::*;
+	use crate::{ArticleId, ArticleVersion};
 
 	#[test]
 	fn from_readme() {
@@ -499,7 +425,7 @@ mod tests_parse_ok {
 
 #[cfg(test)]
 mod tests_parse_err {
-	use super::*;
+	use crate::{ArticleId, ArticleIdError};
 
 	#[test]
 	fn empty_string() {
@@ -528,6 +454,7 @@ mod tests_parse_err {
 	#[test]
 	fn invalid_id() {
 		let maybe_id = ArticleId::try_latest(2007, 11, "");
+
 		assert_eq!(maybe_id, Err(ArticleIdError::InvalidId));
 	}
 }
@@ -535,13 +462,14 @@ mod tests_parse_err {
 #[cfg(test)]
 #[cfg(feature = "url")]
 mod tests_url {
-	use super::*;
+	use crate::{ArticleId, ArticleVersion};
 	use url::Url;
 
 	#[test]
 	fn url_from_id() {
 		let id = ArticleId::try_new(2007, 01, "00001", ArticleVersion::Latest).unwrap();
 		let url = Url::from(id);
+
 		assert_eq!(url.scheme(), "https");
 		assert_eq!(url.domain(), Some("arxiv.org"));
 		assert_eq!(url.path(), "/abs/0701.00001");

@@ -38,12 +38,17 @@
 //!  - `url` (default): Enables converting types into URLs where possible,
 //!    such as converting an article identifier into a URL that leads to its abstract page.
 
-mod category;
-mod identifier;
+mod archive;
+mod article_id;
+mod article_version;
+mod category_id;
+mod group;
 mod stamp;
-mod subject_tables;
-pub use crate::category::*;
-pub use crate::identifier::*;
+pub use crate::archive::*;
+pub use crate::article_id::*;
+pub use crate::article_version::*;
+pub use crate::category_id::*;
+pub use crate::group::*;
 pub use crate::stamp::*;
 
 #[cfg(feature = "serde")]
