@@ -46,6 +46,10 @@ pub use crate::category::*;
 pub use crate::identifier::*;
 pub use crate::stamp::*;
 
+#[cfg(feature = "serde")]
+#[cfg_attr(docsrs, doc(cfg(feature = "serde")))]
+mod serde;
+
 /// Represents the versioned grammar that defines an arXiv identifier
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ArticleIdScheme {

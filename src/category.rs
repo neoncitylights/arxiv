@@ -1,8 +1,11 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
-use crate::subject_tables::*;
+use crate::subject_tables::{COMPSCI_TABLE, MATH_TABLE, PHYSICS_TABLE};
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
+
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// An identifier for arXiv categories, which are composed of an archive and category
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -131,6 +134,8 @@ impl<'a> TryFrom<&'a str> for CategoryId<'a> {
 
 /// A type of classification for arXiv publications
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 pub enum Group {
 	/// Computer Science
 	Cs,
@@ -183,6 +188,8 @@ impl From<Archive> for Group {
 ///
 /// [arxiv-cat]: <https://arxiv.org/category_taxonomy>
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "kebab-case"))]
 pub enum Archive {
 	/// Astro physics
 	AstroPh,
