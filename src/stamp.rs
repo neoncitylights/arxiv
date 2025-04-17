@@ -121,8 +121,7 @@ fn parse_date(date_str: &str) -> Result<Date, JiffError> {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-	use crate::Archive;
+	use crate::{Archive, ArticleId, CategoryId, Stamp};
 	use jiff::civil::date;
 
 	#[test]
@@ -138,8 +137,7 @@ mod tests {
 
 #[cfg(test)]
 mod tests_parse_ok {
-	use super::*;
-	use crate::Archive;
+	use crate::{Archive, ArticleId, CategoryId, Stamp};
 	use jiff::civil::date;
 
 	#[test]
@@ -174,40 +172,45 @@ mod tests_parse_ok {
 
 #[cfg(test)]
 mod tests_parse_err {
-	use super::*;
+	use crate::{Stamp, StampError};
 
 	#[test]
-	fn parse_stamp_empty() {
+	fn is_empty() {
 		let stamp = "";
 		let parsed = Stamp::try_from(stamp);
+
 		assert_eq!(parsed, Err(StampError::NotEnoughComponents));
 	}
 
 	#[test]
-	fn parse_stamp_not_enough_components() {
+	fn not_enough_components() {
 		let stamp = "arXiv:2001.00001";
 		let parsed = Stamp::try_from(stamp);
+
 		assert_eq!(parsed, Err(StampError::NotEnoughComponents));
 	}
 
 	#[test]
-	fn parse_stamp_invalid_category() {
+	fn invalid_category() {
 		let stamp = "arXiv:2001.00001 [cs.LG 1 Jan 2000";
 		let parsed = Stamp::try_from(stamp);
+
 		assert_eq!(parsed, Err(StampError::InvalidCategory));
 	}
 
 	#[test]
-	fn parse_stamp_invalid_date_day() {
+	fn invalid_date_day() {
 		let stamp = "arXiv:2001.00001 [cs.LG] 32 Jan 2000";
 		let parsed = Stamp::try_from(stamp);
+
 		assert_eq!(parsed, Err(StampError::InvalidDate));
 	}
 
 	#[test]
-	fn parse_stamp_invalid_date_month() {
+	fn invalid_date_month() {
 		let stamp = "arXiv:2001.00001 [cs.LG] 1 Zan 2000";
 		let parsed = Stamp::try_from(stamp);
+
 		assert_eq!(parsed, Err(StampError::InvalidDate));
 	}
 }
