@@ -8,45 +8,104 @@ use std::str::FromStr;
 /// [arxiv-cat]: <https://arxiv.org/category_taxonomy>
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Archive {
-	/// Astro physics
+	/// Astrophysics (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/astro-ph>
 	AstroPh,
-	/// Condensed matter
+
+	/// Condensed Matter (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/cond-mat>
 	CondMat,
-	/// Computer science
+
+	/// Computer Science (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/cs>
 	Cs,
-	/// Economics
+
+	/// Economics (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/econ>
 	Econ,
-	/// Electrical Engineering and Systems Science
+
+	/// Electrical Engineering and Systems Science (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/eess>
 	Eess,
-	/// General Relativity and Quantum Cosmology
+
+	/// General Relativity and Quantum Cosmology (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/qr-qc>
 	GrQc,
-	/// High energy physics - Experiment
+
+	/// High Energy Physics - Experiment (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/hep-ex>
 	HepEx,
-	/// High energy physics - Lattice
+
+	/// High Energy Physics - Lattice (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/hep-lat>
 	HepLat,
-	/// High energy physics - Phenomenology
+
+	/// High Energy Physics - Phenomenology (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/hep-ph>
 	HepPh,
-	/// High energy physics - Theory
+
+	/// High Energy Physics - Theory (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/hep-th>
 	HepTh,
-	/// Mathematical Physics
+
+	/// Mathematical Physics (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/math-ph>
 	MathPh,
-	/// Mathematics
+
+	/// Mathematics (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/math>
 	Math,
-	/// Nonlinear Sciences
+
+	/// Nonlinear Sciences (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/nlin>
 	Nlin,
-	/// Nuclear Experiment
+
+	/// Nuclear Experiment (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/nucl-ex>
 	NuclEx,
-	/// Nuclear Theory
+
+	/// Nuclear Theory (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/nucl-th>
 	NuclTh,
-	/// Physics
+
+	/// Physics (link on [arXiv])
+	///
+	/// [arXiv]: < https://arxiv.org/archive/physics>
 	Physics,
-	/// Quantitative Biology
+
+	/// Quantitative Biology (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/q-bio>
 	QBio,
-	/// Quantitative Finance
+
+	/// Quantitative Finance (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/q-fin>
 	QFin,
-	/// Quantum Physics
+
+	/// Quantum Physics (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/quant-ph>
 	QuantPh,
-	/// Statistics
+
+	/// Statistics (link on [arXiv])
+	///
+	/// [arXiv]: <https://arxiv.org/archive/stat>
 	Stat,
 }
 
