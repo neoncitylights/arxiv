@@ -1,12 +1,17 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
 
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 /// A collection of publications that relate under the same field of study
 ///
 /// Valid archive identifiers are listed under the official website's page for [category taxonomy][arxiv-cat].
 ///
 /// [arxiv-cat]: <https://arxiv.org/category_taxonomy>
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "kebab-case"))]
 pub enum Archive {
 	/// Astrophysics (link on [arXiv])
 	///

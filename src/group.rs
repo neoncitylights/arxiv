@@ -1,7 +1,12 @@
 use crate::Archive;
 
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 /// A type of classification for arXiv publications
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 pub enum Group {
 	/// Computer Science
 	Cs,
