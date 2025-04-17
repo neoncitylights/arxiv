@@ -188,6 +188,7 @@ mod tests_url_archive {
 	fn url_from_id() {
 		let id = Archive::AstroPh;
 		let url = Url::from(id);
+
 		assert_eq!(url.scheme(), "https");
 		assert_eq!(url.domain(), Some("arxiv.org"));
 		assert_eq!(url.path(), "/archive/astro-ph");

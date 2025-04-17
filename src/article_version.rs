@@ -66,6 +66,7 @@ mod test_parse_numbervv {
 	#[test]
 	fn is_fine() {
 		let parsed = parse_numbervv("0001v1").unwrap();
+
 		assert_eq!(parsed.0, "0001");
 		assert_eq!(parsed.1, ArticleVersion::Num(1));
 	}

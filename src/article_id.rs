@@ -139,7 +139,7 @@ impl<'a> ArticleId<'a> {
 	///
 	/// # Examples
 	/// ```
-	/// use arxiv::{ArticleId, ArticleIdError, ArticleVersion};
+	/// use arxiv::{ArticleId, ArticleVersion};
 	///
 	/// let id = ArticleId::try_new(2011, 1, "00001", ArticleVersion::Num(1));
 	/// assert!(id.is_ok());
@@ -173,7 +173,7 @@ impl<'a> ArticleId<'a> {
 	///
 	/// # Examples
 	/// ```
-	/// use arxiv::{ArticleId, ArticleIdError};
+	/// use arxiv::ArticleId;
 	///
 	/// let id = ArticleId::try_latest(2011, 1, "00001");
 	/// assert!(id.is_ok());
@@ -240,7 +240,7 @@ impl<'a> ArticleId<'a> {
 	/// ```
 	/// use arxiv::{ArticleId, ArticleVersion};
 	///
-	///  let id = ArticleId::try_from("arXiv:2304.11188v1").unwrap();
+	/// let id = ArticleId::try_from("arXiv:2304.11188v1").unwrap();
 	/// assert_eq!(id.version(), ArticleVersion::Num(1));
 	/// ```
 	#[must_use]
@@ -295,10 +295,9 @@ impl<'a> ArticleId<'a> {
 		let mut year_str = self.year.to_string();
 		let (_, half_year) = year_str.as_mut_str().split_at(2);
 
-		if self.number.len() == 4usize {
-			format!("{:02}{:02}.{:04}", half_year, self.month, self.number)
-		} else {
-			format!("{:02}{:02}.{:05}", half_year, self.month, self.number)
+		match self.number.len() == 4usize {
+			true => format!("{:02}{:02}.{:04}", half_year, self.month, self.number),
+			false => format!("{:02}{:02}.{:05}", half_year, self.month, self.number),
 		}
 	}
 
@@ -349,6 +348,7 @@ impl<'a> TryFrom<&'a str> for ArticleId<'a> {
 		let year = date[0..2].parse::<i16>().map_err(|_| InvalidYear)?;
 		let month = date[2..4].parse::<i8>().map_err(|_| InvalidMonth)?;
 		let (number, version) = parse_numbervv(numbervv).ok_or(ExpectedNumberVv)?;
+
 		ArticleId::try_new(year + 2000i16, month, number, version)
 	}
 }
@@ -357,8 +357,8 @@ impl<'a> TryFrom<&'a str> for ArticleId<'a> {
 #[cfg_attr(docsrs, doc(cfg(feature = "url")))]
 impl<'a> From<ArticleId<'a>> for url::Url {
 	fn from(id: ArticleId<'a>) -> url::Url {
-		url::Url::parse(&format!("https://arxiv.org/abs/{}{}", id.as_unique_ident(), id.version,))
-			.unwrap()
+		let f = &format!("https://arxiv.org/abs/{}{}", id.as_unique_ident(), id.version);
+		url::Url::parse(f).unwrap()
 	}
 }
 
@@ -454,6 +454,7 @@ mod tests_parse_err {
 	#[test]
 	fn invalid_id() {
 		let maybe_id = ArticleId::try_latest(2007, 11, "");
+
 		assert_eq!(maybe_id, Err(ArticleIdError::InvalidId));
 	}
 }
@@ -468,6 +469,7 @@ mod tests_url {
 	fn url_from_id() {
 		let id = ArticleId::try_new(2007, 01, "00001", ArticleVersion::Latest).unwrap();
 		let url = Url::from(id);
+
 		assert_eq!(url.scheme(), "https");
 		assert_eq!(url.domain(), Some("arxiv.org"));
 		assert_eq!(url.path(), "/abs/0701.00001");

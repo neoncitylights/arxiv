@@ -158,7 +158,7 @@ mod tests {
 
 	#[test]
 	fn display_category() {
-		let cat_id = CategoryId::try_new(Archive::AstroPh, "HE");
-		assert_eq!(cat_id.unwrap().to_string(), "astro-ph.HE");
+		let cat_id = CategoryId::try_new(Archive::AstroPh, "HE").unwrap();
+		assert_eq!(cat_id.to_string(), "astro-ph.HE");
 	}
 }
