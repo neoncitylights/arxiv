@@ -1,8 +1,14 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 /// The version of an article as declared in an arXiv identifier
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 pub enum ArticleVersion {
+	#[cfg_attr(feature = "serde", serde(rename = ""))]
 	#[default]
 	Latest,
 	Num(u8),

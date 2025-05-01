@@ -170,12 +170,51 @@ impl<'a> TryFrom<&'a str> for CategoryId<'a> {
 		}
 
 		let (archive_str, subject) = (parts[0], parts[1]);
-		if subject.is_empty() {
-			return Err(ExpectedSubject);
+		let archive = Archive::from_str(archive_str).map_err(|_| InvalidArchive(archive_str))?;
+
+		Self::try_new(archive, subject).ok_or(InvalidArchiveSubject(archive, subject))
+	}
+}
+
+#[cfg(feature = "serde")]
+#[cfg_attr(docsrs, doc(cfg(feature = "serde")))]
+mod serde {
+	use crate::CategoryId;
+	use serde::de::{DeserializeSeed, Error as DeError, Visitor};
+	use std::fmt::{Formatter, Result as FmtResult};
+	use std::marker::PhantomData;
+
+	impl<'de: 'a, 'a> DeserializeSeed<'de> for CategoryId<'a> {
+		type Value = CategoryId<'a>;
+
+		fn deserialize<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
+		where
+			D: serde::Deserializer<'de>,
+		{
+			deserializer.deserialize_str(CategoryIdVisitor(PhantomData))
+		}
+	}
+
+	struct CategoryIdVisitor<'a>(PhantomData<&'a ()>);
+
+	impl<'de: 'a, 'a> Visitor<'de> for CategoryIdVisitor<'a> {
+		type Value = CategoryId<'a>;
+
+		fn expecting(&self, formatter: &mut Formatter) -> FmtResult {
+			formatter.write_str("a string to parse into CategoryId")
 		}
 
-		let archive = Archive::from_str(archive_str).map_err(|_| InvalidArchive(archive_str))?;
-		Self::try_new(archive, subject).ok_or(InvalidArchiveSubject(archive, subject))
+		fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
+		where
+			E: DeError,
+		{
+			CategoryId::try_from(v).map_err(|e| {
+				E::custom(format!(
+					"An error occurred while parsing an ArXiv category identifier: {}",
+					e
+				))
+			})
+		}
 	}
 }
 
