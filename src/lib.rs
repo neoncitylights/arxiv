@@ -44,12 +44,10 @@ mod article_version;
 mod category_id;
 mod group;
 mod stamp;
-pub use crate::archive::*;
-pub use crate::article_id::*;
-pub use crate::article_version::*;
-pub use crate::category_id::*;
-pub use crate::group::*;
-pub use crate::stamp::*;
+
+pub use crate::{
+	archive::*, article_id::*, article_version::*, category_id::*, group::*, stamp::*,
+};
 
 /// Represents the versioned grammar that defines an arXiv identifier
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
