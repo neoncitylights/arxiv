@@ -40,7 +40,7 @@ impl Display for StampError {
 }
 
 /// A stamp that is added onto the side of PDF version of arXiv articles
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Stamp<'a> {
 	pub id: ArticleId<'a>,
 	pub category: CategoryId<'a>,

@@ -6,7 +6,7 @@ use std::str::FromStr;
 /// Valid archive identifiers are listed under the official website's page for [category taxonomy][arxiv-cat].
 ///
 /// [arxiv-cat]: <https://arxiv.org/category_taxonomy>
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Archive {
 	/// Astrophysics (link on [arXiv])
 	///

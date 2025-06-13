@@ -32,7 +32,7 @@ impl Display for CategoryIdError<'_> {
 }
 
 /// An identifier for arXiv categories, which are composed of an archive and category
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct CategoryId<'a> {
 	group: Group,
 	archive: Archive,

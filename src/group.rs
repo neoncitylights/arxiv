@@ -1,7 +1,7 @@
 use crate::Archive;
 
 /// A type of classification for arXiv publications
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Group {
 	/// Computer Science
 	Cs,
