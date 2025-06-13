@@ -105,10 +105,7 @@ impl<'a> CategoryId<'a> {
 			Archive::Stat => matches!(subject, "AP" | "CO" | "ME" | "ML" | "OT" | "TH"),
 		};
 
-		match is_valid {
-			true => Some(Self::new(Group::from(archive), archive, subject)),
-			false => None,
-		}
+		is_valid.then(|| Self::new(Group::from(archive), archive, subject))
 	}
 
 	/// Parse a bracketed string like `[astro-ph.CE]`
