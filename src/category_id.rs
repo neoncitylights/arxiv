@@ -22,11 +22,10 @@ impl Display for CategoryIdError<'_> {
 	fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
 		match self {
 			Self::ExpectedSubject => f.write_str("Expected to find a subject identifier"),
-			Self::InvalidArchive(s) => write!(f, "Invalid arXiv archive identifier: {}", s),
+			Self::InvalidArchive(s) => write!(f, "Invalid arXiv archive identifier: {s}"),
 			Self::InvalidArchiveSubject(archive, subject_str) => write!(
 				f,
-				"The arXiv subject \"{}\" does not fall under the archive \"{}\"",
-				archive, subject_str
+				"The arXiv subject \"{archive}\" does not fall under the archive \"{subject_str}\""
 			),
 		}
 	}

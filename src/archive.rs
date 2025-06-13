@@ -152,26 +152,26 @@ impl Archive {
 impl Display for Archive {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		match self {
-			Archive::AstroPh => f.write_str("astro-ph"),
-			Archive::CondMat => f.write_str("cond-mat"),
-			Archive::Cs => f.write_str("cs"),
-			Archive::Econ => f.write_str("econ"),
-			Archive::Eess => f.write_str("eess"),
-			Archive::GrQc => f.write_str("gr-qc"),
-			Archive::HepEx => f.write_str("hep-ex"),
-			Archive::HepLat => f.write_str("hep-lat"),
-			Archive::HepPh => f.write_str("hep-ph"),
-			Archive::HepTh => f.write_str("hep-th"),
-			Archive::MathPh => f.write_str("math-ph"),
-			Archive::Math => f.write_str("math"),
-			Archive::Nlin => f.write_str("nlin"),
-			Archive::NuclEx => f.write_str("nucl-ex"),
-			Archive::NuclTh => f.write_str("nucl-th"),
-			Archive::Physics => f.write_str("physics"),
-			Archive::QBio => f.write_str("q-bio"),
-			Archive::QFin => f.write_str("q-fin"),
-			Archive::QuantPh => f.write_str("quant-ph"),
-			Archive::Stat => f.write_str("stat"),
+			Self::AstroPh => f.write_str("astro-ph"),
+			Self::CondMat => f.write_str("cond-mat"),
+			Self::Cs => f.write_str("cs"),
+			Self::Econ => f.write_str("econ"),
+			Self::Eess => f.write_str("eess"),
+			Self::GrQc => f.write_str("gr-qc"),
+			Self::HepEx => f.write_str("hep-ex"),
+			Self::HepLat => f.write_str("hep-lat"),
+			Self::HepPh => f.write_str("hep-ph"),
+			Self::HepTh => f.write_str("hep-th"),
+			Self::MathPh => f.write_str("math-ph"),
+			Self::Math => f.write_str("math"),
+			Self::Nlin => f.write_str("nlin"),
+			Self::NuclEx => f.write_str("nucl-ex"),
+			Self::NuclTh => f.write_str("nucl-th"),
+			Self::Physics => f.write_str("physics"),
+			Self::QBio => f.write_str("q-bio"),
+			Self::QFin => f.write_str("q-fin"),
+			Self::QuantPh => f.write_str("quant-ph"),
+			Self::Stat => f.write_str("stat"),
 		}
 	}
 }
@@ -208,8 +208,8 @@ impl FromStr for Archive {
 #[cfg(feature = "url")]
 #[cfg_attr(docsrs, doc(cfg(feature = "url")))]
 impl From<Archive> for url::Url {
-	fn from(archive: Archive) -> url::Url {
-		url::Url::parse(&format!("https://arxiv.org/archive/{}", archive)).unwrap()
+	fn from(archive: Archive) -> Self {
+		Self::parse(&format!("https://arxiv.org/archive/{archive}")).unwrap()
 	}
 }
 

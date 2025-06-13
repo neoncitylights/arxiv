@@ -356,9 +356,9 @@ impl<'a> TryFrom<&'a str> for ArticleId<'a> {
 #[cfg(feature = "url")]
 #[cfg_attr(docsrs, doc(cfg(feature = "url")))]
 impl<'a> From<ArticleId<'a>> for url::Url {
-	fn from(id: ArticleId<'a>) -> url::Url {
+	fn from(id: ArticleId<'a>) -> Self {
 		let f = &format!("https://arxiv.org/abs/{}{}", id.as_unique_ident(), id.version);
-		url::Url::parse(f).unwrap()
+		Self::parse(f).unwrap()
 	}
 }
 

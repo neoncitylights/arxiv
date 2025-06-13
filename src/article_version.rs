@@ -18,7 +18,7 @@ impl Display for ArticleVersion {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		match self {
 			Self::Latest => f.write_str(""),
-			Self::Num(v) => write!(f, "v{}", v),
+			Self::Num(v) => write!(f, "v{v}"),
 		}
 	}
 }
