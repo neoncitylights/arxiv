@@ -1,10 +1,13 @@
 use crate::{ArticleId, ArticleIdError, CategoryId};
-use jiff::civil::Date;
-use jiff::fmt::strtime::format as jiff_format;
-use jiff::fmt::strtime::parse as jiff_parse;
-use jiff::Error as JiffError;
-use std::error::Error;
-use std::fmt::{Display, Formatter, Result as FmtResult};
+use jiff::{
+	civil::Date,
+	fmt::strtime::{format as jiff_format, parse as jiff_parse},
+	Error as JiffError,
+};
+use std::{
+	error::Error,
+	fmt::{Display, Formatter, Result as FmtResult},
+};
 
 /// Convenient type alias for a [`Result`] holding either a [`Stamp`] or [`StampError`]
 pub type StampResult<'a> = Result<Stamp<'a>, StampError>;
