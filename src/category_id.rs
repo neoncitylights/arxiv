@@ -22,18 +22,17 @@ impl Display for CategoryIdError<'_> {
 	fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
 		match self {
 			Self::ExpectedSubject => f.write_str("Expected to find a subject identifier"),
-			Self::InvalidArchive(s) => write!(f, "Invalid arXiv archive identifier: {}", s),
+			Self::InvalidArchive(s) => write!(f, "Invalid arXiv archive identifier: {s}"),
 			Self::InvalidArchiveSubject(archive, subject_str) => write!(
 				f,
-				"The arXiv subject \"{}\" does not fall under the archive \"{}\"",
-				archive, subject_str
+				"The arXiv subject \"{archive}\" does not fall under the archive \"{subject_str}\""
 			),
 		}
 	}
 }
 
 /// An identifier for arXiv categories, which are composed of an archive and category
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct CategoryId<'a> {
 	group: Group,
 	archive: Archive,
@@ -106,10 +105,7 @@ impl<'a> CategoryId<'a> {
 			Archive::Stat => matches!(subject, "AP" | "CO" | "ME" | "ML" | "OT" | "TH"),
 		};
 
-		match is_valid {
-			true => Some(Self::new(Group::from(archive), archive, subject)),
-			false => None,
-		}
+		is_valid.then(|| Self::new(Group::from(archive), archive, subject))
 	}
 
 	/// Parse a bracketed string like `[astro-ph.CE]`

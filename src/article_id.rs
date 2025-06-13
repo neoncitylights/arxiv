@@ -54,7 +54,7 @@ impl Display for ArticleIdError {
 /// ```
 ///
 /// [arxiv-docs]: https://info.arxiv.org/help/arxiv_identifier.html
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ArticleId<'a> {
 	year: i16,
 	month: i8,
@@ -349,16 +349,16 @@ impl<'a> TryFrom<&'a str> for ArticleId<'a> {
 		let month = date[2..4].parse::<i8>().map_err(|_| InvalidMonth)?;
 		let (number, version) = parse_numbervv(numbervv).ok_or(ExpectedNumberVv)?;
 
-		ArticleId::try_new(year + 2000i16, month, number, version)
+		Self::try_new(year + 2000i16, month, number, version)
 	}
 }
 
 #[cfg(feature = "url")]
 #[cfg_attr(docsrs, doc(cfg(feature = "url")))]
 impl<'a> From<ArticleId<'a>> for url::Url {
-	fn from(id: ArticleId<'a>) -> url::Url {
+	fn from(id: ArticleId<'a>) -> Self {
 		let f = &format!("https://arxiv.org/abs/{}{}", id.as_unique_ident(), id.version);
-		url::Url::parse(f).unwrap()
+		Self::parse(f).unwrap()
 	}
 }
 

@@ -1,7 +1,7 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
 /// The version of an article as declared in an arXiv identifier
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Hash, PartialOrd, Ord)]
 pub enum ArticleVersion {
 	#[default]
 	Latest,
@@ -18,7 +18,7 @@ impl Display for ArticleVersion {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		match self {
 			Self::Latest => f.write_str(""),
-			Self::Num(v) => write!(f, "v{}", v),
+			Self::Num(v) => write!(f, "v{v}"),
 		}
 	}
 }

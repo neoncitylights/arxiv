@@ -6,7 +6,7 @@ use std::str::FromStr;
 /// Valid archive identifiers are listed under the official website's page for [category taxonomy][arxiv-cat].
 ///
 /// [arxiv-cat]: <https://arxiv.org/category_taxonomy>
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Archive {
 	/// Astrophysics (link on [arXiv])
 	///
@@ -151,65 +151,65 @@ impl Archive {
 
 impl Display for Archive {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-		match self {
-			Archive::AstroPh => f.write_str("astro-ph"),
-			Archive::CondMat => f.write_str("cond-mat"),
-			Archive::Cs => f.write_str("cs"),
-			Archive::Econ => f.write_str("econ"),
-			Archive::Eess => f.write_str("eess"),
-			Archive::GrQc => f.write_str("gr-qc"),
-			Archive::HepEx => f.write_str("hep-ex"),
-			Archive::HepLat => f.write_str("hep-lat"),
-			Archive::HepPh => f.write_str("hep-ph"),
-			Archive::HepTh => f.write_str("hep-th"),
-			Archive::MathPh => f.write_str("math-ph"),
-			Archive::Math => f.write_str("math"),
-			Archive::Nlin => f.write_str("nlin"),
-			Archive::NuclEx => f.write_str("nucl-ex"),
-			Archive::NuclTh => f.write_str("nucl-th"),
-			Archive::Physics => f.write_str("physics"),
-			Archive::QBio => f.write_str("q-bio"),
-			Archive::QFin => f.write_str("q-fin"),
-			Archive::QuantPh => f.write_str("quant-ph"),
-			Archive::Stat => f.write_str("stat"),
-		}
+		f.write_str(match self {
+			Self::AstroPh => "astro-ph",
+			Self::CondMat => "cond-mat",
+			Self::Cs => "cs",
+			Self::Econ => "econ",
+			Self::Eess => "eess",
+			Self::GrQc => "gr-qc",
+			Self::HepEx => "hep-ex",
+			Self::HepLat => "hep-lat",
+			Self::HepPh => "hep-ph",
+			Self::HepTh => "hep-th",
+			Self::MathPh => "math-ph",
+			Self::Math => "math",
+			Self::Nlin => "nlin",
+			Self::NuclEx => "nucl-ex",
+			Self::NuclTh => "nucl-th",
+			Self::Physics => "physics",
+			Self::QBio => "q-bio",
+			Self::QFin => "q-fin",
+			Self::QuantPh => "quant-ph",
+			Self::Stat => "stat",
+		})
 	}
 }
 
 impl FromStr for Archive {
 	type Err = ();
 	fn from_str(s: &str) -> Result<Self, Self::Err> {
-		match s {
-			"astro-ph" => Ok(Self::AstroPh),
-			"cond-mat" => Ok(Self::CondMat),
-			"cs" => Ok(Self::Cs),
-			"econ" => Ok(Self::Econ),
-			"eess" => Ok(Self::Eess),
-			"gr-qc" => Ok(Self::GrQc),
-			"hep-ex" => Ok(Self::HepEx),
-			"hep-lat" => Ok(Self::HepLat),
-			"hep-ph" => Ok(Self::HepPh),
-			"hep-th" => Ok(Self::HepTh),
-			"math-ph" => Ok(Self::MathPh),
-			"math" => Ok(Self::Math),
-			"nlin" => Ok(Self::Nlin),
-			"nucl-ex" => Ok(Self::NuclEx),
-			"nucl-th" => Ok(Self::NuclTh),
-			"physics" => Ok(Self::Physics),
-			"q-bio" => Ok(Self::QBio),
-			"q-fin" => Ok(Self::QFin),
-			"quant-ph" => Ok(Self::QuantPh),
-			"stat" => Ok(Self::Stat),
-			_ => Err(()),
-		}
+		Ok(match s {
+			"astro-ph" => Self::AstroPh,
+			"cond-mat" => Self::CondMat,
+			"cs" => Self::Cs,
+			"econ" => Self::Econ,
+			"eess" => Self::Eess,
+			"gr-qc" => Self::GrQc,
+			"hep-ex" => Self::HepEx,
+			"hep-lat" => Self::HepLat,
+			"hep-ph" => Self::HepPh,
+			"hep-th" => Self::HepTh,
+			"math-ph" => Self::MathPh,
+			"math" => Self::Math,
+			"nlin" => Self::Nlin,
+			"nucl-ex" => Self::NuclEx,
+			"nucl-th" => Self::NuclTh,
+			"physics" => Self::Physics,
+			"q-bio" => Self::QBio,
+			"q-fin" => Self::QFin,
+			"quant-ph" => Self::QuantPh,
+			"stat" => Self::Stat,
+			_ => return Err(()),
+		})
 	}
 }
 
 #[cfg(feature = "url")]
 #[cfg_attr(docsrs, doc(cfg(feature = "url")))]
 impl From<Archive> for url::Url {
-	fn from(archive: Archive) -> url::Url {
-		url::Url::parse(&format!("https://arxiv.org/archive/{}", archive)).unwrap()
+	fn from(archive: Archive) -> Self {
+		Self::parse(&format!("https://arxiv.org/archive/{archive}")).unwrap()
 	}
 }
 

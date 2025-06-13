@@ -31,7 +31,7 @@ impl Error for StampError {}
 impl Display for StampError {
 	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
 		match self {
-			Self::InvalidArxivId(e) => write!(f, "Invalid arXiv ID: {}", e),
+			Self::InvalidArxivId(e) => write!(f, "Invalid arXiv ID: {e}"),
 			Self::InvalidDate => f.write_str("Invalid date"),
 			Self::InvalidCategory => f.write_str("Invalid category"),
 			Self::NotEnoughComponents => f.write_str("Not enough components"),
@@ -40,7 +40,7 @@ impl Display for StampError {
 }
 
 /// A stamp that is added onto the side of PDF version of arXiv articles
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Stamp<'a> {
 	pub id: ArticleId<'a>,
 	pub category: CategoryId<'a>,
