@@ -54,7 +54,7 @@ impl Display for ArticleIdError {
 /// ```
 ///
 /// [arxiv-docs]: https://info.arxiv.org/help/arxiv_identifier.html
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ArticleId<'a> {
 	year: i16,
 	month: i8,
