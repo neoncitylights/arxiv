@@ -349,7 +349,7 @@ impl<'a> TryFrom<&'a str> for ArticleId<'a> {
 		let month = date[2..4].parse::<i8>().map_err(|_| InvalidMonth)?;
 		let (number, version) = parse_numbervv(numbervv).ok_or(ExpectedNumberVv)?;
 
-		ArticleId::try_new(year + 2000i16, month, number, version)
+		Self::try_new(year + 2000i16, month, number, version)
 	}
 }
 
