@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0 (2025-06-13)
+### Features
+- The types `Archive`, `ArticleId`, `ArticleVersion`, `CategoryId`, `Group`, `Stamp` now implement the traits `PartialOrd`, `Ord`, `Hash`. ([#36](https://github.com/neoncitylights/arxiv/pull/36) by [adamnemecek](https://github.com/adamnemecek))
+
+### Dependencies
+- `jiff` was bumped from v0.2.10 to v0.2.14. ([#35](https://github.com/neoncitylights/arxiv/pull/35))
+
 ## 1.0.2 (2025-02-11)
 - Fixes minor cargo clippy issues
 - Fixes minor markdown issues in README.md

@@ -1,24 +1,20 @@
 [package]
 name = "arxiv"
-version = "1.0.2"
+version = "1.1.0"
 authors = ["Samantha Nguyen, <contact@samanthanguyen.me>"]
-description = "Rust library to parse arXiv identifiers and references"
-repository = "https://github.com/neoncitylights/arxiv"
-readme = "README.md"
-license = "MIT OR Apache-2.0"
 edition = "2021"
 rust-version = "1.70.0"
+description = "Rust library to parse arXiv identifiers and references"
+readme = "README.md"
+repository = "https://github.com/neoncitylights/arxiv"
+license = "MIT OR Apache-2.0"
 keywords = ["arxiv"]
 categories = ["parsing", "text-processing"]
-include = ["src", "LICENSE-APACHE", "LICENSE-MIT"]
+include = ["LICENSE-APACHE", "LICENSE-MIT", "src"]
 
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
-
-[features]
-default = ["url"]
-url = ["dep:url"]
 
 [dependencies.jiff]
 version = "0.2"
@@ -26,3 +22,7 @@ version = "0.2"
 [dependencies.url]
 version = "2.5.4"
 optional = true
+
+[features]
+default = ["url"]
+url = ["dep:url"]
