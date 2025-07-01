@@ -324,19 +324,10 @@ impl Display for ArticleId<'_> {
 	}
 }
 
-impl<'a> TryFrom<&'a str> for ArticleId<'a> {
-	type Error = ArticleIdError;
-
-	fn try_from(value: &'a str) -> Result<Self, Self::Error> {
+impl<'a> ArticleId<'a> {
+	fn try_from_id(id: &'a str) -> Result<Self, ArticleIdError> {
 		use ArticleIdError::*;
-
-		// break down the arxiv string into its components
-		let parts: Vec<&str> = value.split(ArticleId::TOKEN_COLON).collect();
-		if parts.len() != 2 || parts[0] != "arXiv" {
-			return Err(ExpectedBeginningLiteral);
-		}
-
-		let inner_parts: Vec<&str> = parts[1].split(ArticleId::TOKEN_DOT).collect();
+		let inner_parts: Vec<&str> = id.split(ArticleId::TOKEN_DOT).collect();
 		if inner_parts.len() != 2 {
 			return Err(ExpectedNumberVv);
 		}
@@ -350,6 +341,68 @@ impl<'a> TryFrom<&'a str> for ArticleId<'a> {
 		let (number, version) = parse_numbervv(numbervv).ok_or(ExpectedNumberVv)?;
 
 		Self::try_new(year + 2000i16, month, number, version)
+	}
+}
+
+impl<'a> TryFrom<&'a str> for ArticleId<'a> {
+	type Error = ArticleIdError;
+
+	fn try_from(value: &'a str) -> Result<Self, Self::Error> {
+		use ArticleIdError::*;
+
+		// break down the arxiv string into its components
+		let parts: Vec<&str> = value.split(ArticleId::TOKEN_COLON).collect();
+		if parts.len() != 2 || parts[0] != "arXiv" {
+			return Err(ExpectedBeginningLiteral);
+		}
+
+		Self::try_from_id(parts[1])
+	}
+}
+
+#[derive(PartialEq, Eq, Debug)]
+pub enum UrlParsingError<'a> {
+	MissingDomain,
+	InvalidDomain(&'a str),
+	MissingUrlSegments,
+	MissingFormat,
+	InvalidArxivFormat,
+	MissingArticleId,
+	InvalidArticleId(ArticleIdError),
+}
+
+#[cfg(feature = "url")]
+#[cfg_attr(docsrs, doc(cfg(feature = "url")))]
+impl<'a> TryFrom<&'a url::Url> for ArticleId<'a> {
+	type Error = UrlParsingError<'a>;
+	fn try_from(value: &'a url::Url) -> Result<Self, Self::Error> {
+		let Some(domain) = value.domain() else {
+			return Err(UrlParsingError::MissingDomain);
+		};
+
+		if !domain.ends_with("arxiv.org") {
+			return Err(UrlParsingError::InvalidDomain(domain));
+		}
+
+		let Some(mut seg) = value.path_segments() else {
+			return Err(UrlParsingError::MissingUrlSegments);
+		};
+
+		let Some(format) = seg.next() else {
+			return Err(UrlParsingError::MissingFormat);
+		};
+
+		if !matches!(format, "abs" | "html" | "pdf") {
+			return Err(UrlParsingError::InvalidArxivFormat);
+		}
+
+		let Some(id) = seg.next() else {
+			return Err(UrlParsingError::MissingArticleId);
+		};
+
+		let len = id.len() - if id.ends_with(".pdf") { 4 } else { 0 };
+
+		Self::try_from_id(&id[..len]).map_err(UrlParsingError::InvalidArticleId)
 	}
 }
 
