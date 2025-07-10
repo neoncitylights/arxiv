@@ -110,17 +110,70 @@ pub enum Archive {
 }
 
 impl Archive {
-	/// Checks if the archive contains any nested subjects.
+	pub(crate) const COMPSCI_TABLE: &'static [&'static str] = &[
+		"AI", "AR", "CC", "CE", "CG", "CL", "CR", "CV", "CY", "DB", "DC", "DL", "DM", "DS", "ET",
+		"FL", "GL", "GR", "GT", "HC", "IR", "IT", "LG", "LO", "MA", "MM", "MS", "NA", "NI", "OH",
+		"OS", "PF", "PL", "RO", "SC", "SD", "SE", "SI", "SY",
+	];
+
+	pub(crate) const MATH_TABLE: &'static [&'static str] = &[
+		"AC", "AG", "AP", "AT", "CA", "CO", "CT", "CV", "DG", "DS", "FA", "GM", "GN", "GR", "GT",
+		"HO", "IT", "KT", "LO", "MG", "MP", "NA", "NT", "OA", "OC", "PR", "QA", "RA", "RT", "SG",
+		"SP", "ST",
+	];
+
+	pub(crate) const PHYSICS_TABLE: &'static [&'static str] = &[
+		"acc-ph", "ao-ph", "app-ph", "atm-clus", "atom-ph", "bio-ph", "chem-ph", "class-ph",
+		"comp-ph", "data-an", "ed-pn", "flu-dyn", "gen-ph", "geo-ph", "hist-ph", "ins-det",
+		"med-ph", "optics", "plasm-ph", "pop-ph", "soc-ph", "space-ph",
+	];
+
+	pub fn is_valid_subject(&self, subject: &str) -> bool {
+		match self {
+			Self::AstroPh => matches!(subject, "CO" | "EP" | "GA" | "HE" | "IM" | "SR"),
+			Self::CondMat => matches!(subject, |"dis-nn"| "mes-hall"
+				| "mtrl-sci" | "other"
+				| "quant-gas"
+				| "soft" | "stat-mech"
+				| "str-el" | "supr-con"),
+			Self::Cs => Self::COMPSCI_TABLE.binary_search(&subject).is_ok(),
+			Self::Econ => matches!(subject, "EM" | "GN" | "TH"),
+			Self::Eess => matches!(subject, "AS" | "IV" | "SP" | "SY"),
+			Self::GrQc => subject.is_empty(),
+			Self::HepEx => subject.is_empty(),
+			Self::HepLat => subject.is_empty(),
+			Self::HepPh => subject.is_empty(),
+			Self::HepTh => subject.is_empty(),
+			Self::MathPh => subject.is_empty(),
+			Self::Math => Self::MATH_TABLE.binary_search(&subject).is_ok(),
+			Self::Nlin => matches!(subject, "AO" | "CD" | "CG" | "PS" | "SI"),
+			Self::NuclEx => subject.is_empty(),
+			Self::NuclTh => subject.is_empty(),
+			Self::Physics => Self::PHYSICS_TABLE.binary_search(&subject).is_ok(),
+			Self::QBio => matches!(
+				subject,
+				"BM" | "CB" | "GN" | "MN" | "NC" | "OT" | "PE" | "QM" | "SC" | "TO"
+			),
+			Self::QFin => {
+				matches!(subject, "CP" | "EC" | "GN" | "MF" | "PM" | "PR" | "RM" | "ST" | "SR")
+			}
+			Self::QuantPh => subject.is_empty(),
+			Self::Stat => matches!(subject, "AP" | "CO" | "ME" | "ML" | "OT" | "TH"),
+		}
+	}
+
+	/// Checks if the archive will always have nested subjects.
 	///
 	/// ```
 	/// use arxiv::Archive;
 	///
-	/// assert!(Archive::GrQc.contains_subjects());
+	/// assert!(Self::GrQc.contains_subjects());
 	/// ```
+	#[rustfmt::skip]
 	pub const fn contains_subjects(&self) -> bool {
-		matches!(
-			self,
-			Self::GrQc
+		matches!( self,
+				Self::Cs
+				| Self::GrQc
 				| Self::HepEx
 				| Self::HepLat
 				| Self::HepPh
@@ -132,13 +185,18 @@ impl Archive {
 		)
 	}
 
+	/// Checks if the archive can sometimes contain subjects, or have no subjects.
+	pub const fn can_omit_subjects(&self) -> bool {
+		matches!(self, Self::Physics | Self::CondMat)
+	}
+
 	/// Converts the article identifier to a URL where the abstract page is.
 	///
 	/// ```
 	/// use arxiv::Archive;
 	/// use url::Url;
 	///
-	/// let id = Archive::AstroPh;
+	/// let id = Self::AstroPh;
 	/// let url = Url::from(id);
 	/// assert_eq!(url.to_string(), "https://arxiv.org/archive/astro-ph");
 	/// ```

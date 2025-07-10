@@ -1,4 +1,5 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
+use std::str::FromStr;
 
 /// The version of an article as declared in an arXiv identifier
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Hash, PartialOrd, Ord)]
@@ -6,6 +7,16 @@ pub enum ArticleVersion {
 	#[default]
 	Latest,
 	Num(u8),
+}
+
+impl ArticleVersion {
+	pub const fn is_latest(&self) -> bool {
+		matches!(self, Self::Latest)
+	}
+
+	pub const fn is_version(&self, v: u8) -> bool {
+		matches!(self, Self::Num(version) if *version == v)
+	}
 }
 
 impl From<u8> for ArticleVersion {
@@ -23,51 +34,39 @@ impl Display for ArticleVersion {
 	}
 }
 
-/// Parses a string in the format of "number{vV}",
-/// where:
-/// - `number` is a unique integer up 4 to 5 digits
-/// - `{vV}` (optional): a `v` literal followed by 1 or more digits
-pub(crate) fn parse_numbervv(s: &str) -> Option<(&str, ArticleVersion)> {
-	if s.len() < 4 {
-		return None;
-	}
-
-	let first4 = &s[..4];
-	let are_digits = first4.chars().all(|c| c.is_ascii_digit());
-	if !are_digits {
-		return None;
-	}
-
-	let mut peek = s[4..].chars().peekable();
-	let number = match peek.next_if(|c| c.is_ascii_digit()) {
-		Some(_) => &s[..5],
-		None => &s[..4],
-	};
-
-	let mut version = ArticleVersion::Latest;
-	if s.len() > number.len() {
-		let after_number = &mut s[number.len()..].chars().peekable();
-		if after_number.next_if(|c| *c == 'v').is_some() {
-			let consume = after_number
-				.take_while(|c| c.is_ascii_digit())
-				.collect::<String>();
-			let version_u8 = consume.parse::<u8>().ok()?;
-			version = ArticleVersion::Num(version_u8);
+impl FromStr for ArticleVersion {
+	type Err = ();
+	fn from_str(s: &str) -> Result<Self, Self::Err> {
+		if s.is_empty() {
+			return Ok(Self::Latest);
 		}
-	}
+		if !s.starts_with('v') {
+			return Err(());
+		}
 
-	Some((number, version))
+		let version = s[1..].parse::<u8>().map_err(|_| ())?;
+		Ok(Self::Num(version))
+	}
 }
 
 #[cfg(test)]
-mod test_parse_numbervv {
-	use crate::{parse_numbervv, ArticleVersion};
+mod tests {
+	use crate::ArticleVersion;
+	use std::str::FromStr;
 
 	#[test]
-	fn is_fine() {
-		let parsed = parse_numbervv("0001v1").unwrap();
+	fn parse_latest() {
+		assert_eq!(ArticleVersion::from_str(""), Ok(ArticleVersion::Latest));
+	}
 
-		assert_eq!(parsed.0, "0001");
-		assert_eq!(parsed.1, ArticleVersion::Num(1));
+	#[test]
+	fn parse_version_ok() {
+		assert_eq!(ArticleVersion::from_str("v1"), Ok(ArticleVersion::Num(1)));
+	}
+
+	#[test]
+	fn parse_version_err() {
+		assert_eq!(ArticleVersion::from_str("v"), Err(()));
+		assert_eq!(ArticleVersion::from_str("vfoo"), Err(()));
 	}
 }

@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.0 (Unreleased)
+TODO: rest of notes
+
+### Breaking changes
+- `ArticleId` is now an enum with variants `V1(ArticleIdV1)` and `V2(ArticleIDV2)`.
+- `Stamp`'s field `id` is now an `ArticleIdV2`.
+
+### Bug fixes
+- `CategoryId` can now parse identifiers with archives that don't contain any subjects.
+
+### Features
+- `ArticleVersion` now implements `FromStr`.
+
 ## 1.1.0 (2025-06-13)
 ### Features
 - The types `Archive`, `ArticleId`, `ArticleVersion`, `CategoryId`, `Group`, `Stamp` now implement the traits `PartialOrd`, `Ord`, `Hash`. ([#36](https://github.com/neoncitylights/arxiv/pull/36) by [adamnemecek](https://github.com/adamnemecek))
