@@ -1,4 +1,4 @@
-use crate::{ArticleId, ArticleIdError, CategoryId};
+use crate::{ArticleIdError, ArticleIdV2, CategoryId};
 use jiff::civil::Date;
 use jiff::fmt::strtime::format as jiff_format;
 use jiff::fmt::strtime::parse as jiff_parse;
@@ -42,7 +42,7 @@ impl Display for StampError {
 /// A stamp that is added onto the side of PDF version of arXiv articles
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Stamp<'a> {
-	pub id: ArticleId<'a>,
+	pub id: ArticleIdV2<'a>,
 	pub category: CategoryId<'a>,
 	pub submitted: Date,
 }
@@ -62,7 +62,7 @@ impl<'a> Stamp<'a> {
 	/// );
 	/// ```
 	#[inline]
-	pub const fn new(id: ArticleId<'a>, category: CategoryId<'a>, submitted: Date) -> Self {
+	pub const fn new(id: ArticleIdV2<'a>, category: CategoryId<'a>, submitted: Date) -> Self {
 		Self {
 			id,
 			category,
@@ -96,7 +96,7 @@ impl<'a> TryFrom<&'a str> for Stamp<'a> {
 
 		// parse an id
 		let space1 = wsp_indices[0].0;
-		let id = ArticleId::try_from(&s[0..space1]).map_err(InvalidArxivId)?;
+		let id = ArticleIdV2::try_from(&s[0..space1]).map_err(InvalidArxivId)?;
 
 		// parse a category
 		let space2 = wsp_indices[1].0;
@@ -121,13 +121,13 @@ fn parse_date(date_str: &str) -> Result<Date, JiffError> {
 
 #[cfg(test)]
 mod tests {
-	use crate::{Archive, ArticleId, CategoryId, Stamp};
+	use crate::{Archive, ArticleIdV2, CategoryId, Stamp};
 	use jiff::civil::date;
 
 	#[test]
 	fn display_stamp() {
 		let stamp = Stamp::new(
-			ArticleId::try_from("arXiv:2011.00001").unwrap(),
+			ArticleIdV2::try_from("arXiv:2011.00001").unwrap(),
 			CategoryId::try_new(Archive::Cs, "LG").unwrap(),
 			date(2011, 1, 1),
 		);
@@ -137,7 +137,7 @@ mod tests {
 
 #[cfg(test)]
 mod tests_parse_ok {
-	use crate::{Archive, ArticleId, CategoryId, Stamp};
+	use crate::{Archive, ArticleIdV2, CategoryId, Stamp};
 	use jiff::civil::date;
 
 	#[test]
@@ -147,7 +147,7 @@ mod tests_parse_ok {
 		assert_eq!(
 			parsed,
 			Ok(Stamp::new(
-				ArticleId::try_from("arXiv:2001.00001").unwrap(),
+				ArticleIdV2::try_from("arXiv:2001.00001").unwrap(),
 				CategoryId::try_new(Archive::Cs, "LG").unwrap(),
 				date(2000, 1, 1)
 			))
@@ -162,7 +162,7 @@ mod tests_parse_ok {
 		assert_eq!(
 			parsed,
 			Ok(Stamp::new(
-				ArticleId::try_from("arXiv:0706.0001v1").unwrap(),
+				ArticleIdV2::try_from("arXiv:0706.0001v1").unwrap(),
 				CategoryId::try_new(Archive::QBio, "CB").unwrap(),
 				date(2007, 6, 1)
 			))
