@@ -3,6 +3,7 @@
 ## Unreleased
 ### Notable changes
 - The rust edition was bumped from 2021 to 2024.
+- The minimum supported rust version (MSRV) was bumped from 1.70.0 to 1.85.0. (See: [The Cargo Book § Semver Compatibility](https://doc.rust-lang.org/cargo/reference/semver.html#env-new-rust))
 
 ## 1.1.0 (2025-06-13)
 ### Features

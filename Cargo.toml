@@ -11,4 +11,4 @@ license = "MIT OR Apache-2.0"
 categories = ["parsing", "text-processing"]
 keywords = ["arxiv"]
 edition = "2021"
-rust-version = "1.70.0"
+rust-version = "1.85.0"
