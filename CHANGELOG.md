@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Notable changes
+- The rust edition was bumped from 2021 to 2024.
+
 ## 1.1.0 (2025-06-13)
 ### Features
 - The types `Archive`, `ArticleId`, `ArticleVersion`, `CategoryId`, `Group`, `Stamp` now implement the traits `PartialOrd`, `Ord`, `Hash`. ([#36](https://github.com/neoncitylights/arxiv/pull/36) by [adamnemecek](https://github.com/adamnemecek))
