@@ -37,7 +37,7 @@ jobs:
       matrix:
         include:
           - label: msrv
-            toolchain: '1.85'
+            toolchain: '1.88'
           - label: stable
             toolchain: stable
           - label: beta
