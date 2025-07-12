@@ -1,8 +1,8 @@
 use crate::{ArticleId, ArticleIdError, CategoryId};
+use jiff::Error as JiffError;
 use jiff::civil::Date;
 use jiff::fmt::strtime::format as jiff_format;
 use jiff::fmt::strtime::parse as jiff_parse;
-use jiff::Error as JiffError;
 use std::error::Error;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
