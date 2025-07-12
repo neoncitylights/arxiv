@@ -18,14 +18,6 @@ async fn main() -> WebDriverResult<()> {
 	let taxonomy = find_axonomy_types().await?;
 	println!("{:?}", taxonomy);
 
-	// let taxonomy: HashMap<String, Vec<Category>> = HashMap::from([(
-	// 	"CompSci".to_owned(),
-	// 	vec![
-	// 		Category::new_str("csg", "Graphics"),
-	// 		Category::new_str("csv", "Vision"),
-	// 	],
-	// )]);
-
 	for (group, categories) in taxonomy.iter() {
 		let group_enum_ident = format!("Group{}", group);
 		let variants = categories
@@ -37,19 +29,5 @@ async fn main() -> WebDriverResult<()> {
 		println!("{}", pretty_print(&group_enum));
 	}
 
-	// let my_enum = new_enum("test".to_owned(), vec!["Blue".to_owned(), "Red".to_owned()]);
-	// println!("{}", pretty_print(&my_enum));
-	// let v = vec!["Blue", "Red", "Green"];
-	// let v = v.into_iter().map(|s| format_ident!("{}", s));
-
-	// let my_enum = new_enum(
-	// 	String::from("Color"),
-	// 	vec![
-	// 		String::from("Blue"),
-	// 		String::from("Red"),
-	// 		String::from("Green"),
-	// 	],
-	// );
-	// println!("{}", pretty_print(&my_enum));
 	Ok(())
 }
