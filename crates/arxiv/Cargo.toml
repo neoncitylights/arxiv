@@ -1,0 +1,28 @@
+[package]
+name = "arxiv"
+version = "1.1.0"
+readme = "README.md"
+include = ["LICENSE-APACHE", "LICENSE-MIT", "src"]
+authors.workspace = true
+description.workspace = true
+repository.workspace = true
+license.workspace = true
+categories.workspace = true
+keywords.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[dependencies.jiff]
+version = "0.2"
+
+[dependencies.url]
+version = "2.5.4"
+optional = true
+
+[features]
+default = ["url"]
+url = ["dep:url"]
