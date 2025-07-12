@@ -61,7 +61,7 @@ pub(crate) fn parse_numbervv(s: &str) -> Option<(&str, ArticleVersion)> {
 
 #[cfg(test)]
 mod test_parse_numbervv {
-	use crate::{parse_numbervv, ArticleVersion};
+	use crate::{ArticleVersion, parse_numbervv};
 
 	#[test]
 	fn is_fine() {

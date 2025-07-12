@@ -1,6 +1,6 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
-use crate::{parse_numbervv, ArticleVersion};
+use crate::{ArticleVersion, parse_numbervv};
 use std::error::Error;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
