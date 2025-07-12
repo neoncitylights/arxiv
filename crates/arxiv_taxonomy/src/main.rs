@@ -16,10 +16,10 @@ use thirtyfour::prelude::*;
 #[tokio::main]
 async fn main() -> WebDriverResult<()> {
 	let taxonomy = find_axonomy_types().await?;
-	println!("{:?}", taxonomy);
+	println!("{taxonomy:?}");
 
 	for (group, categories) in taxonomy.iter() {
-		let group_enum_ident = format!("Group{}", group);
+		let group_enum_ident = format!("Group{group}");
 		let variants = categories
 			.iter()
 			.map(|c| c.id_as_enum_variant())

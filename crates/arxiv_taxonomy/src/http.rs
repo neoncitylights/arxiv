@@ -17,7 +17,7 @@ pub async fn find_axonomy_types() -> WebDriverResult<TaxonomyMap> {
 	let port: u16 = args[1]
 		.parse()
 		.expect("Port must be a number between [0, 65535]");
-	println!("Running on port: {}", port);
+	println!("Running on port: {port}");
 
 	// start session
 	let driver = start_webdriver(port).await?;
@@ -30,7 +30,7 @@ pub async fn find_axonomy_types() -> WebDriverResult<TaxonomyMap> {
 
 pub async fn start_webdriver(port: u16) -> WebDriverResult<WebDriver> {
 	let caps = DesiredCapabilities::chrome();
-	let server = format!("http://localhost:{}", port);
+	let server = format!("http://localhost:{port}");
 	let driver = WebDriver::new(server, caps).await?;
 	driver.goto("https://arxiv.org/category_taxonomy").await?;
 
@@ -47,7 +47,7 @@ pub async fn iter_taxonomy_list(driver: &WebDriver) -> WebDriverResult<TaxonomyM
 	let mut current_group = String::new();
 
 	// walk through
-	for (_, child) in children.iter().enumerate() {
+	for child in children.iter() {
 		let tag = child.tag_name().await?;
 
 		// check heading
@@ -59,7 +59,7 @@ pub async fn iter_taxonomy_list(driver: &WebDriver) -> WebDriverResult<TaxonomyM
 
 		// check group
 		if let Some(class) = child.class_name().await?
-			&& class == String::from("accordion-body")
+			&& class == "accordion-body"
 		{
 			// - Click to make content visible, otherwise content
 			//   inside of accordion can't be detected by webdriver
@@ -68,7 +68,7 @@ pub async fn iter_taxonomy_list(driver: &WebDriver) -> WebDriverResult<TaxonomyM
 			let heading = child.find(By::XPath("preceding-sibling::*[1]")).await?;
 			heading.click().await?;
 
-			let mut categories = iter_arxiv_group(&child).await?;
+			let mut categories = iter_arxiv_group(child).await?;
 			taxonomy_map
 				.entry(current_group.clone())
 				.or_default()
@@ -76,7 +76,7 @@ pub async fn iter_taxonomy_list(driver: &WebDriver) -> WebDriverResult<TaxonomyM
 		}
 	}
 
-	println!("{:?}", taxonomy_map);
+	println!("{taxonomy_map:?}");
 	Ok(taxonomy_map)
 }
 
@@ -84,8 +84,8 @@ async fn iter_arxiv_group(element: &WebElement) -> WebDriverResult<Vec<Category>
 	let categories = element.find_all(By::Css(".columns > .column h4")).await?;
 	let categories = categories
 		.iter()
-		.map(|c| c.clone())
-		.map(async |c| CategoryComponent::from(c).as_category().await.unwrap());
+		.cloned()
+		.map(async |c| CategoryComponent::from(c).into_category().await.unwrap());
 	let categories = join_all(categories).await;
 
 	Ok(categories)
@@ -106,9 +106,9 @@ pub struct CategoryComponent {
 }
 
 impl CategoryComponent {
-	async fn as_category(self) -> WebDriverResult<Category> {
+	async fn into_category(self) -> WebDriverResult<Category> {
 		let text = self.base.text().await?;
-		println!("{}", text);
+		println!("{text}");
 
 		let mut id = String::new();
 		let mut name = String::new();
