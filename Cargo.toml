@@ -10,5 +10,5 @@ repository = "https://github.com/neoncitylights/arxiv"
 license = "MIT OR Apache-2.0"
 categories = ["parsing", "text-processing"]
 keywords = ["arxiv"]
-edition = "2021"
+edition = "2024"
 rust-version = "1.85.0"
